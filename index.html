@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student ID Card Generator — Swiss Educational College</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #c8102e;
+        }
+        .header h1 { color: #c8102e; margin-bottom: 5px; font-size: 1.8em; }
+        .header .subtitle { color: #666; font-size: 1.1em; }
+
+        /* ── Steps ── */
+        .step {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 5px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        .step.active  { border-left-color: #4285f4; }
+        .step.complete{ border-left-color: #34a853; background: #f8fff8; }
+        .step.error   { border-left-color: #ea4335; }
+
+        .step-header  { display: flex; align-items: center; margin-bottom: 15px; }
+        .step-number  {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #e0e0e0; color: #666;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.1em; margin-right: 15px; flex-shrink: 0;
+        }
+        .step.active  .step-number { background: #4285f4; color: white; }
+        .step.complete .step-number { background: #34a853; color: white; }
+        .step.complete .step-number::after { content: "✓"; }
+        .step.complete .step-number span  { display: none; }
+        .step-title   { font-size: 1.1em; font-weight: 600; color: #333; }
+        .step-content { margin-left: 51px; }
+
+        /* ── Inputs & Buttons ── */
+        .input-group { display: flex; gap: 10px; margin: 10px 0; }
+        .input-group input, input.full-width {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus, input.full-width:focus {
+            outline: none; border-color: #4285f4;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            margin: 5px 5px 5px 0;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-primary  { background: #4285f4; color: white; }
+        .btn-primary:hover { background: #3367d6; }
+        .btn-success  { background: #34a853; color: white; }
+        .btn-success:hover { background: #2d8e47; }
+        .btn-save     { background: #fbbc04; color: #333; }
+        .btn-save:hover { background: #f5a600; }
+        .btn-large    { font-size: 16px; padding: 15px 35px; }
+        .btn:disabled { background: #ccc !important; color: #888 !important; cursor: not-allowed; }
+
+        /* ── Status boxes ── */
+        .status {
+            margin: 10px 0; padding: 10px 15px;
+            border-radius: 6px; font-size: 14px;
+        }
+        .status.info    { background: #e8f0fe; color: #1967d2; }
+        .status.success { background: #e6f4ea; color: #137333; }
+        .status.error   { background: #fce8e6; color: #c5221f; }
+        .status.warning { background: #fef7e0; color: #b06000; }
+        .status:empty   { display: none; }
+
+        /* ── Info / note boxes ── */
+        .info-box {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            border-radius: 0 6px 6px 0;
+            margin: 15px 0; font-size: 13px; color: #555;
+        }
+        .info-box code {
+            background: #fff0b3; padding: 1px 5px;
+            border-radius: 3px; font-family: monospace; font-size: 12px;
+        }
+
+        /* ── Settings collapsible ── */
+        .settings-panel {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px; overflow: hidden;
+        }
+        .settings-toggle {
+            width: 100%; background: none; border: none;
+            padding: 18px 25px; cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 15px; font-weight: 600; color: #444;
+            border-bottom: 1px solid transparent; transition: border-color 0.2s;
+        }
+        .settings-toggle:hover { background: #f9f9f9; }
+        .settings-toggle.open { border-bottom-color: #eee; }
+        .settings-toggle .arrow { transition: transform 0.2s; color: #999; }
+        .settings-toggle.open .arrow { transform: rotate(180deg); }
+        .settings-body { padding: 20px 25px; display: none; }
+        .settings-body.open { display: block; }
+        .settings-saved { font-size: 12px; color: #34a853; margin-left: 8px; display: none; }
+
+        /* ── Class validity table ── */
+        .class-table {
+            width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;
+        }
+        .class-table th {
+            background: #f1f3f4; padding: 9px 12px;
+            text-align: left; font-weight: 600; color: #444;
+        }
+        .class-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; }
+        .class-table tr:last-child td { border-bottom: none; }
+        .class-table tr:hover td { background: #fafafa; }
+        .class-badge {
+            display: inline-block; background: #e8f0fe; color: #1967d2;
+            padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500;
+        }
+        .validity-input {
+            padding: 7px 10px;
+            border: 1.5px solid #e0e0e0; border-radius: 5px;
+            font-size: 13px; width: 175px; transition: border-color 0.2s;
+        }
+        .validity-input:focus { outline: none; border-color: #4285f4; }
+        .validity-input.skip { border-color: #ea4335; color: #999; }
+        .skip-label { font-size: 11px; color: #ea4335; margin-left: 4px; }
+
+        /* ── Progress bar ── */
+        .progress-wrap  { margin: 12px 0; }
+        .progress-bar   { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .progress-fill  {
+            height: 100%; background: #4285f4; border-radius: 4px;
+            transition: width 0.5s ease; width: 0%;
+        }
+        .progress-label { font-size: 12px; color: #666; margin-top: 5px; }
+
+        /* ── Result box ── */
+        .result-box {
+            background: linear-gradient(135deg, #34a853 0%, #0d652d 100%);
+            color: white; padding: 28px; border-radius: 12px; text-align: center; margin-top: 15px;
+        }
+        .result-box.has-errors {
+            background: linear-gradient(135deg, #f9a825 0%, #e65100 100%);
+        }
+        .result-box h3 { font-size: 1.5em; margin-bottom: 8px; }
+        .result-stats { display: flex; justify-content: center; gap: 14px; margin: 16px 0; flex-wrap: wrap; }
+        .result-stat {
+            background: rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 20px; font-size: 14px;
+        }
+        .result-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 18px 0 8px; }
+        .result-btn {
+            display: inline-block; background: white; padding: 13px 22px;
+            border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;
+            cursor: pointer; border: none; transition: transform 0.2s; white-space: nowrap;
+        }
+        .result-btn:hover { transform: scale(1.04); }
+        .result-btn.green  { color: #137333; }
+        .result-btn.blue   { color: #1967d2; }
+
+        /* ── Download instructions ── */
+        .dl-steps {
+            background: white; border-radius: 10px; padding: 20px;
+            margin-top: 16px; box-shadow: 0 1px 5px rgba(0,0,0,0.07);
+        }
+        .dl-steps h4 { font-size: 15px; color: #333; margin-bottom: 12px; }
+        .dl-step-list { counter-reset: dl; list-style: none; padding: 0; }
+        .dl-step-list li {
+            counter-increment: dl;
+            display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; font-size: 14px;
+        }
+        .dl-step-list li::before {
+            content: counter(dl);
+            background: #4285f4; color: white;
+            min-width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+        }
+
+        /* ── Error list ── */
+        .error-list {
+            max-height: 160px; overflow-y: auto;
+            background: rgba(0,0,0,0.15); border-radius: 6px;
+            padding: 10px; margin-top: 8px; text-align: left;
+        }
+        .error-list div { font-size: 12px; padding: 2px 0; }
+
+        /* ── Help sections ── */
+        details { margin-top: 12px; }
+        details summary {
+            cursor: pointer; padding: 10px 14px;
+            background: #f1f3f4; border-radius: 8px;
+            color: #555; font-size: 13px; list-style: none;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details[open] summary { border-radius: 8px 8px 0 0; }
+        .help-content {
+            background: #fafafa; border-radius: 0 0 8px 8px;
+            padding: 14px; font-size: 13px; color: #555;
+        }
+        .help-content ul { padding-left: 18px; margin: 6px 0; }
+        .help-content li { margin: 4px 0; }
+        .help-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+        .help-table td { padding: 7px 10px; border-bottom: 1px solid #e8e8e8; font-size: 12px; }
+        .help-table td:first-child { width: 160px; font-weight: 500; white-space: nowrap; }
+        code {
+            background: #e8e8e8; padding: 1px 6px;
+            border-radius: 3px; font-family: monospace; font-size: 12px;
+        }
+
+        .footer {
+            text-align: center; padding: 24px; color: #999; font-size: 12px; margin-top: 10px;
+        }
+
+        .stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+        .stat {
+            background: #f1f3f4; padding: 4px 12px; border-radius: 15px; font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .step-content { margin-left: 0; margin-top: 12px; }
+            .input-group { flex-direction: column; }
+            .result-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🪪 Student ID Card Generator</h1>
+    <p class="subtitle">Swiss Educational College — Build student list + photo ZIP automatically</p>
+</div>
+
+<!-- ═══════════════════════════════ SETTINGS ════════════════════════════════ -->
+<div class="settings-panel">
+    <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">
+        <span>⚙️ Settings <span class="settings-saved" id="settingsSaved">✓ Saved</span></span>
+        <span class="arrow">▼</span>
+    </button>
+    <div class="settings-body" id="settingsBody">
+        <p style="font-size:13px;color:#777;margin-bottom:16px;">
+            These are saved in your browser. You only need to configure this once.
+        </p>
+
+        <label style="display:block;font-weight:600;font-size:13px;margin-bottom:5px;color:#333;">
+            🔗 Apps Script Web App URL
+        </label>
+        <div class="input-group">
+            <input type="url" id="webAppUrl" placeholder="https://script.google.com/macros/s/……/exec" />
+        </div>
+
+        <label style="display:block;font-weight:600;font-size:13px;margin:14px 0 5px;color:#333;">
+            📋 Photo Index Sheet URL
+            <span style="font-weight:400;color:#999;font-size:12px;">(Sheet1 — Col B = Email, Col C = Drive photo link)</span>
+        </label>
+        <div class="input-group">
+            <input type="url" id="sheet1Url" placeholder="https://docs.google.com/spreadsheets/d/…" />
+        </div>
+
+        <div class="info-box" style="margin-top:12px;">
+            <strong>Sheet1 structure:</strong>
+            Col A = Name (ignored) &nbsp;│&nbsp; Col B = School Email &nbsp;│&nbsp;
+            Col C = Google Drive photo link (<code>thumbnail?id=…</code> format is fine)
+        </div>
+
+        <button class="btn btn-save" onclick="saveSettings()" style="margin-top:8px;">💾 Save Settings</button>
+
+        <details style="margin-top:16px;">
+            <summary>❓ How to get the Apps Script Web App URL</summary>
+            <div class="help-content">
+                <ul>
+                    <li>Open your Google Spreadsheet → <strong>Extensions → Apps Script</strong></li>
+                    <li>Paste the <code>StudentIDCards.gs</code> code → Save</li>
+                    <li><strong>Deploy → New deployment → Web app</strong></li>
+                    <li>Execute as: <em>Me</em> &nbsp;|&nbsp; Who has access: <em>Anyone</em></li>
+                    <li>Click <strong>Deploy</strong> → copy the Web app URL → paste above</li>
+                    <li>⚠️ After <em>every</em> script change: re-deploy → <em>New version</em></li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</div>
+
+<!-- ═══════════════════════════ STEP 1: SHEET2 URL ═════════════════════════ -->
+<div class="step active" id="step1Card">
+    <div class="step-header">
+        <div class="step-number"><span>1</span></div>
+        <div class="step-title">Enter Class List (Sheet2)</div>
+    </div>
+    <div class="step-content">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">
+            Paste the URL of your master student list (Sheet2). The script will read
+            <strong>Col A</strong> = Class, <strong>Col AG</strong> = Full Name,
+            <strong>Col AH</strong> = School Email, <strong>Col AI</strong> = Birthday.
+        </p>
+        <div class="input-group">
+            <input type="url" id="sheet2Url"
+                   placeholder="https://docs.google.com/spreadsheets/d/…"
+                   onkeydown="if(event.key==='Enter') loadClasses()" />
+            <button class="btn btn-primary" onclick="loadClasses()" id="loadBtn">Load Classes →</button>
+        </div>
+        <div id="step1Status" class="status"></div>
+
+        <details>
+            <summary>❓ Troubleshooting</summary>
+            <div class="help-content">
+                <table class="help-table">
+                    <tr><td>❌ "Cannot open"</td><td>Make sure the Google account running the Apps Script has access to this sheet</td></tr>
+                    <tr><td>❌ "Class column not found"</td><td>Sheet2 must have a header row. Col A header = <code>Class</code></td></tr>
+                    <tr><td>❌ "Apps Script URL not set"</td><td>Open ⚙️ Settings above and save your Web App URL first</td></tr>
+                    <tr><td>❌ CORS / network error</td><td>Re-deploy the Apps Script as a new version and try again</td></tr>
+                </table>
+            </div>
+        </details>
+    </div>
+</div>
+
+<!-- ══════════════════════ STEP 2: VALIDITY CONFIG ═════════════════════════ -->
+<div class="step" id="step2Card" style="display:none">
+    <div class="step-header">
+        <div class="step-number"><span>2</span></div>
+        <div class="step-title">Set Validity Periods</div>
+    </div>
+    <div class="step-content">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">
+            Classes are grouped by prefix. Set a validity period for each group
+            (<code>MM/YYYY-MM/YYYY</code>). Leave blank to <strong>skip</strong> that group.
+        </p>
+
+        <table class="class-table" id="classTable">
+            <thead>
+                <tr>
+                    <th>Class Prefix</th>
+                    <th>Students</th>
+                    <th>Validity Period</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="classTableBody"></tbody>
+        </table>
+
+        <div id="validityNote" class="info-box"></div>
+
+        <div class="stats" id="classSummaryStats" style="margin-top:10px;"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════ STEP 3: GENERATE ════════════════════════════ -->
+<div class="step" id="step3Card" style="display:none">
+    <div class="step-header">
+        <div class="step-number"><span>3</span></div>
+        <div class="step-title">Generate &amp; Download</div>
+    </div>
+    <div class="step-content">
+        <p style="font-size:13px;color:#555;margin-bottom:16px;">
+            The Apps Script will copy &amp; rename all student photos to a Drive folder
+            and create the formatted student list with clickable relative photo links.
+            This takes <strong>1–3 minutes</strong> depending on student count.
+        </p>
+
+        <div style="text-align:center;margin-bottom:16px;">
+            <button class="btn btn-success btn-large" onclick="generate()" id="generateBtn">
+                ⚡ Generate Now
+            </button>
+        </div>
+
+        <div id="progressWrap" style="display:none;">
+            <div class="progress-wrap">
+                <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                <div class="progress-label" id="progressLabel">Connecting…</div>
+            </div>
+        </div>
+
+        <div id="step3Status" class="status"></div>
+        <div id="resultArea"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════ HOW IT WORKS ══════════════════════════════════ -->
+<details>
+    <summary>ℹ️ How it works &amp; final folder structure</summary>
+    <div class="help-content">
+        <p style="margin-bottom:10px;">After generating, you download two things from Google Drive and combine them:</p>
+        <table class="help-table">
+            <tr><td>📊 Student list</td><td>Open the output sheet link → <strong>File → Download → Microsoft Excel (.xlsx)</strong></td></tr>
+            <tr><td>📁 Photos folder</td><td>Open the Photos folder link → right-click → <strong>Download</strong> → unzip</td></tr>
+            <tr><td>🗂️ Combine</td><td>Place the <code>Photos/</code> folder next to the <code>.xlsx</code> file</td></tr>
+            <tr><td>🔗 Open</td><td>Open Excel → click any cell in the last column → photo opens locally</td></tr>
+        </table>
+        <p style="margin-top:12px;"><strong>Final structure (ZIP this for distribution):</strong></p>
+        <pre style="background:#f1f3f4;padding:10px;border-radius:6px;font-size:12px;margin-top:6px;">StudentIDCards/
+  ├── StudentIDCards.xlsx
+  └── Photos/
+        ├── antony.aghilesh@student.swissedcol.ch.jpg
+        ├── rahul.agrawal@student.swissedcol.ch.jpg
+        └── …</pre>
+        <p style="margin-top:10px;font-size:12px;color:#888;">
+            The HYPERLINK formula in Excel uses a relative path (<code>Photos/email.jpg</code>),
+            so links work on any computer as long as the folder structure is kept intact.
+        </p>
+    </div>
+</details>
+
+<div class="footer">Swiss Educational College &nbsp;·&nbsp; Student ID Card Generator</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DEFAULTS — add new intake terms here
+// ═══════════════════════════════════════════════════════════════════════════
+const DEFAULT_VALIDITY = {
+    '25-T3-': '07/2025-06/2026',
+    '25-T4-': '10/2025-09/2026',
+    '26-T1-': '01/2026-12/2026',
+    '26-T2-': '04/2026-03/2027',
+    '26-T3-': '07/2026-06/2027',
+};
+
+let WEB_APP_URL  = '';
+let SHEET1_URL   = '';
+let loadedClasses = [];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════════════════════════
+function loadSettings() {
+    WEB_APP_URL = localStorage.getItem('idcard_webapp') || '';
+    SHEET1_URL  = localStorage.getItem('idcard_sheet1') || '';
+    document.getElementById('webAppUrl').value  = WEB_APP_URL;
+    document.getElementById('sheet1Url').value  = SHEET1_URL;
+    if (!WEB_APP_URL) openSettings();
+}
+
+function saveSettings() {
+    WEB_APP_URL = document.getElementById('webAppUrl').value.trim();
+    SHEET1_URL  = document.getElementById('sheet1Url').value.trim();
+    localStorage.setItem('idcard_webapp',  WEB_APP_URL);
+    localStorage.setItem('idcard_sheet1',  SHEET1_URL);
+    const el = document.getElementById('settingsSaved');
+    el.style.display = 'inline';
+    setTimeout(() => el.style.display = 'none', 2500);
+}
+
+function toggleSettings() {
+    const body   = document.getElementById('settingsBody');
+    const toggle = document.getElementById('settingsToggle');
+    const open   = body.classList.toggle('open');
+    toggle.classList.toggle('open', open);
+}
+
+function openSettings() {
+    document.getElementById('settingsBody').classList.add('open');
+    document.getElementById('settingsToggle').classList.add('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STEP 1 — Load classes
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadClasses() {
+    const sheet2Url = document.getElementById('sheet2Url').value.trim();
+    if (!sheet2Url) { setStatus('step1Status', 'error', 'Please enter the Sheet2 URL.'); return; }
+
+    const webApp = document.getElementById('webAppUrl').value.trim() || WEB_APP_URL;
+    if (!webApp)  { setStatus('step1Status', 'error', '❌ Apps Script URL not configured — open ⚙️ Settings first.'); openSettings(); return; }
+    WEB_APP_URL = webApp;
+
+    setStatus('step1Status', 'info', '⏳ Connecting to Apps Script and reading class list…');
+    document.getElementById('loadBtn').disabled = true;
+
+    try {
+        const data = await callScript({ action: 'loadClasses', sheet2Url });
+        if (!data.success) throw new Error(data.error || 'Failed to load classes');
+
+        loadedClasses = data.classes;
+        renderClassTable(data.classes, data.totalStudents);
+
+        setStatus('step1Status', 'success',
+            `✅ Loaded ${data.totalStudents} students across ${data.classes.length} class group(s).`);
+
+        markDone('step1Card');
+        show('step2Card', true);
+        show('step3Card', true);
+        document.getElementById('step2Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+        setStatus('step1Status', 'error', '❌ ' + err.message);
+        document.getElementById('step1Card').classList.add('error');
+    } finally {
+        document.getElementById('loadBtn').disabled = false;
+    }
+}
+
+function renderClassTable(classes, total) {
+    const tbody = document.getElementById('classTableBody');
+    tbody.innerHTML = '';
+
+    let included = 0, skipped = 0;
+
+    classes.forEach(cls => {
+        const defVal = guessValidity(cls.prefix);
+        if (defVal) included += cls.count; else skipped += cls.count;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><span class="class-badge">${esc(cls.prefix)}</span></td>
+            <td style="color:#666">${cls.count}</td>
+            <td>
+                <input type="text"
+                    class="validity-input${defVal ? '' : ' skip'}"
+                    id="val_${esc(cls.prefix)}"
+                    data-prefix="${esc(cls.prefix)}"
+                    value="${esc(defVal)}"
+                    placeholder="MM/YYYY-MM/YYYY" />
+                ${defVal ? '' : '<span class="skip-label">will be skipped</span>'}
+            </td>
+            <td style="font-size:12px;color:#888;">${defVal ? '✅' : '⚠️'}</td>`;
+        tbody.appendChild(tr);
+    });
+
+    // Attach live update so skip-label responds to typing
+    document.querySelectorAll('.validity-input').forEach(input => {
+        input.addEventListener('input', () => {
+            const hasVal = input.value.trim();
+            input.classList.toggle('skip', !hasVal);
+            const next = input.parentElement.nextElementSibling;
+            if (next) next.textContent = hasVal ? '✅' : '⚠️';
+        });
+    });
+
+    document.getElementById('validityNote').innerHTML = skipped > 0
+        ? `⚠️ <strong>${skipped} student(s)</strong> in unrecognised class groups — add a validity period above to include them, or leave blank to skip.`
+        : `✅ All ${total} students have a validity period assigned.`;
+
+    document.getElementById('classSummaryStats').innerHTML = `
+        <div class="stat">👥 ${total} total students</div>
+        <div class="stat">✅ ${included} included</div>
+        ${skipped ? `<div class="stat" style="background:#fce8e6;color:#c5221f;">⚠️ ${skipped} skipped</div>` : ''}
+    `;
+}
+
+function guessValidity(prefix) {
+    // Match by term prefix e.g. "25-T4-" or "26-T1-"
+    for (const [key, val] of Object.entries(DEFAULT_VALIDITY)) {
+        if (prefix.startsWith(key) || key.startsWith(prefix.substring(0, 7))) return val;
+    }
+    return '';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STEP 2 — Generate
+// ═══════════════════════════════════════════════════════════════════════════
+async function generate() {
+    const sheet1Url = document.getElementById('sheet1Url').value.trim() || SHEET1_URL;
+    const sheet2Url = document.getElementById('sheet2Url').value.trim();
+
+    if (!sheet1Url) {
+        setStatus('step3Status', 'error', '❌ Photo Index URL (Sheet1) not set — open ⚙️ Settings.');
+        openSettings(); return;
+    }
+    if (!sheet2Url) {
+        setStatus('step3Status', 'error', '❌ Sheet2 URL is missing — fill in Step 1.'); return;
+    }
+    if (!WEB_APP_URL) {
+        setStatus('step3Status', 'error', '❌ Apps Script URL not set — open ⚙️ Settings.');
+        openSettings(); return;
+    }
+
+    // Collect validity map
+    const validityMap = {};
+    document.querySelectorAll('.validity-input').forEach(inp => {
+        const prefix = inp.getAttribute('data-prefix');
+        const val    = inp.value.trim();
+        if (prefix && val) validityMap[prefix] = val;
+    });
+
+    if (!Object.keys(validityMap).length) {
+        setStatus('step3Status', 'error', '❌ No validity periods set — at least one class must be configured.'); return;
+    }
+
+    document.getElementById('generateBtn').disabled = true;
+    document.getElementById('resultArea').innerHTML  = '';
+    show('progressWrap', true);
+    setProgress(8, 'Sending request to Apps Script…');
+    setStatus('step3Status', 'info', '⏳ Processing — this takes 1–3 minutes. Do not close this tab.');
+
+    try {
+        setProgress(20, 'Reading Sheet1 photo index…');
+        const res = await callScript({ action: 'generate', sheet1Url, sheet2Url, validityMap });
+        setProgress(100, 'Complete!');
+
+        if (!res.success) throw new Error(res.error || 'Generation failed');
+
+        setStatus('step3Status', 'success',
+            `✅ ${res.studentsCount} students processed — ${res.photoOk} photos copied, ${res.photoErrors?.length || 0} errors.`);
+
+        renderResult(res);
+        markDone('step3Card');
+        document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+
+    } catch (err) {
+        show('progressWrap', false);
+        setProgress(0, '');
+        setStatus('step3Status', 'error', '❌ ' + err.message);
+        document.getElementById('step3Card').classList.add('error');
+    } finally {
+        document.getElementById('generateBtn').disabled = false;
+    }
+}
+
+function renderResult(res) {
+    const hasErrors = res.photoErrors && res.photoErrors.length > 0;
+
+    const errorBlock = hasErrors ? `
+        <div class="error-list">
+            <strong style="font-size:12px;">Missing photos (${res.photoErrors.length}):</strong><br>
+            ${res.photoErrors.map(e => `<div>• ${esc(e)}</div>`).join('')}
+        </div>` : '';
+
+    document.getElementById('resultArea').innerHTML = `
+        <div class="result-box ${hasErrors ? 'has-errors' : ''}">
+            <h3>${hasErrors ? '⚠️ Done with some missing photos' : '✅ Generation Complete!'}</h3>
+            <div class="result-stats">
+                <div class="result-stat">👥 ${res.studentsCount} students</div>
+                <div class="result-stat">📸 ${res.photoOk} photos</div>
+                ${hasErrors ? `<div class="result-stat">⚠️ ${res.photoErrors.length} missing</div>` : ''}
+                <div class="result-stat">📁 ${esc(res.photoFolderName)}</div>
+            </div>
+            <div class="result-buttons">
+                <a class="result-btn green" href="${esc(res.spreadsheetUrl)}" target="_blank">
+                    📊 Open Student List
+                </a>
+                <a class="result-btn blue" href="${esc(res.photoFolderUrl)}" target="_blank">
+                    📁 Open Photos in Drive
+                </a>
+            </div>
+            ${errorBlock}
+        </div>
+
+        <div class="dl-steps">
+            <h4>📥 Download & Combine</h4>
+            <ol class="dl-step-list">
+                <li>In the <strong>Student List</strong> sheet: click <strong>File → Download → Microsoft Excel (.xlsx)</strong> — save it to a local folder</li>
+                <li>In the <strong>Photos</strong> Drive folder: right-click → <strong>Download</strong> — Google zips it automatically. Unzip to get a <code>Photos</code> folder</li>
+                <li>Place the <code>Photos</code> folder in the <strong>same folder</strong> as the <code>.xlsx</code> file</li>
+                <li>Open the Excel file → click any cell in the <strong>Link_to_Cropped_Photo</strong> column → the photo opens locally 🎉</li>
+                <li>Optional: ZIP the whole folder and share it — links still work on any machine</li>
+            </ol>
+        </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════════════════
+async function callScript(payload) {
+    const url = WEB_APP_URL || document.getElementById('webAppUrl').value.trim();
+    if (!url) throw new Error('Apps Script URL not configured. Open ⚙️ Settings.');
+
+    const response = await fetch(url, {
+        method:   'POST',
+        headers:  { 'Content-Type': 'text/plain' },
+        body:     JSON.stringify(payload),
+        redirect: 'follow',
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status} — ${response.statusText}`);
+    const text = await response.text();
+    try   { return JSON.parse(text); }
+    catch { throw new Error('Unexpected response from Apps Script:\n' + text.substring(0, 300)); }
+}
+
+function setStatus(id, type, msg) {
+    const el = document.getElementById(id);
+    el.className = 'status ' + type;
+    el.textContent = msg;
+}
+
+function setProgress(pct, label) {
+    document.getElementById('progressFill').style.width  = pct + '%';
+    document.getElementById('progressLabel').textContent = label;
+}
+
+function markDone(id) {
+    document.getElementById(id).classList.remove('active', 'error');
+    document.getElementById(id).classList.add('complete');
+}
+
+function show(id, visible) {
+    const el = document.getElementById(id);
+    if (visible) { el.style.display = 'block'; el.classList.add('active'); }
+    else           el.style.display = 'none';
+}
+
+function esc(str) {
+    return String(str || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+loadSettings();
+</script>
+</body>
+</html>
