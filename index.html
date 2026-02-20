@@ -1,723 +1,990 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student ID Card Generator — Swiss Educational College</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
-            line-height: 1.6;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student ID Card Generator — Swiss Educational College</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 900px; margin: 0 auto; padding: 20px;
+    background: #f0f2f5; line-height: 1.6; color: #333;
+}
 
-        /* ── Header ── */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #c8102e;
-        }
-        .header h1 { color: #c8102e; margin-bottom: 5px; font-size: 1.8em; }
-        .header .subtitle { color: #666; font-size: 1.1em; }
+/* ── Header ── */
+.header {
+    text-align: center; margin-bottom: 24px;
+    padding-bottom: 20px; border-bottom: 3px solid #c8102e;
+}
+.header h1 { color: #c8102e; font-size: 1.8em; margin-bottom: 4px; }
+.header p  { color: #666; font-size: 1em; }
 
-        /* ── Steps ── */
-        .step {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-left: 5px solid #e0e0e0;
-            transition: all 0.3s;
-        }
-        .step.active  { border-left-color: #4285f4; }
-        .step.complete{ border-left-color: #34a853; background: #f8fff8; }
-        .step.error   { border-left-color: #ea4335; }
+/* ── Settings panel ── */
+.settings-panel {
+    border-radius: 10px; margin-bottom: 18px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #ffc107; background: #fffde7;
+}
+.settings-panel.ok { border-color: #34a853; background: white; }
 
-        .step-header  { display: flex; align-items: center; margin-bottom: 15px; }
-        .step-number  {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: #e0e0e0; color: #666;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.1em; margin-right: 15px; flex-shrink: 0;
-        }
-        .step.active  .step-number { background: #4285f4; color: white; }
-        .step.complete .step-number { background: #34a853; color: white; }
-        .step.complete .step-number::after { content: "✓"; }
-        .step.complete .step-number span  { display: none; }
-        .step-title   { font-size: 1.1em; font-weight: 600; color: #333; }
-        .step-content { margin-left: 51px; }
+.settings-toggle {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: transparent; border: none;
+    cursor: pointer; font-size: 14px; font-weight: 600; color: #333; text-align: left;
+}
+.settings-toggle:hover { background: rgba(0,0,0,0.03); }
 
-        /* ── Inputs & Buttons ── */
-        .input-group { display: flex; gap: 10px; margin: 10px 0; }
-        .input-group input, input.full-width {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-        .input-group input:focus, input.full-width:focus {
-            outline: none; border-color: #4285f4;
-        }
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            margin: 5px 5px 5px 0;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .btn-primary  { background: #4285f4; color: white; }
-        .btn-primary:hover { background: #3367d6; }
-        .btn-success  { background: #34a853; color: white; }
-        .btn-success:hover { background: #2d8e47; }
-        .btn-save     { background: #fbbc04; color: #333; }
-        .btn-save:hover { background: #f5a600; }
-        .btn-large    { font-size: 16px; padding: 15px 35px; }
-        .btn:disabled { background: #ccc !important; color: #888 !important; cursor: not-allowed; }
+.s-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 9px; border-radius: 10px; margin-left: 8px;
+}
+.s-badge.warn { background: #fce8e6; color: #c5221f; }
+.s-badge.good { background: #e6f4ea; color: #137333; }
+.s-arrow { font-size: 12px; color: #888; }
 
-        /* ── Status boxes ── */
-        .status {
-            margin: 10px 0; padding: 10px 15px;
-            border-radius: 6px; font-size: 14px;
-        }
-        .status.info    { background: #e8f0fe; color: #1967d2; }
-        .status.success { background: #e6f4ea; color: #137333; }
-        .status.error   { background: #fce8e6; color: #c5221f; }
-        .status.warning { background: #fef7e0; color: #b06000; }
-        .status:empty   { display: none; }
+.settings-body { padding: 0 18px 18px; }
+.settings-body.hidden { display: none; }
 
-        /* ── Info / note boxes ── */
-        .info-box {
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
-            padding: 12px 15px;
-            border-radius: 0 6px 6px 0;
-            margin: 15px 0; font-size: 13px; color: #555;
-        }
-        .info-box code {
-            background: #fff0b3; padding: 1px 5px;
-            border-radius: 3px; font-family: monospace; font-size: 12px;
-        }
+/* ── Field labels & inputs ── */
+.field-label {
+    display: block; font-size: 13px; font-weight: 600;
+    margin: 14px 0 5px; color: #333;
+}
+.field-label small { font-weight: 400; color: #888; }
+.url-input {
+    width: 100%; padding: 10px 13px;
+    border: 2px solid #ddd; border-radius: 6px;
+    font-size: 13px; font-family: monospace;
+}
+.url-input:focus { outline: none; border-color: #4285f4; }
+.url-input.set { border-color: #34a853; background: #f8fff9; }
 
-        /* ── Settings collapsible ── */
-        .settings-panel {
-            background: white; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px; overflow: hidden;
-        }
-        .settings-toggle {
-            width: 100%; background: none; border: none;
-            padding: 18px 25px; cursor: pointer;
-            display: flex; align-items: center; justify-content: space-between;
-            font-size: 15px; font-weight: 600; color: #444;
-            border-bottom: 1px solid transparent; transition: border-color 0.2s;
-        }
-        .settings-toggle:hover { background: #f9f9f9; }
-        .settings-toggle.open { border-bottom-color: #eee; }
-        .settings-toggle .arrow { transition: transform 0.2s; color: #999; }
-        .settings-toggle.open .arrow { transform: rotate(180deg); }
-        .settings-body { padding: 20px 25px; display: none; }
-        .settings-body.open { display: block; }
-        .settings-saved { font-size: 12px; color: #34a853; margin-left: 8px; display: none; }
+/* ── Steps ── */
+.step {
+    background: white; border-radius: 10px; padding: 20px 22px;
+    margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid #ddd;
+}
+.step.active   { border-left-color: #4285f4; }
+.step.done     { border-left-color: #34a853; background: #f9fff9; }
+.step.locked   { border-left-color: #ddd; background: #fafafa; }
+.step.errored  { border-left-color: #ea4335; }
 
-        /* ── Class validity table ── */
-        .class-table {
-            width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px;
-        }
-        .class-table th {
-            background: #f1f3f4; padding: 9px 12px;
-            text-align: left; font-weight: 600; color: #444;
-        }
-        .class-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; }
-        .class-table tr:last-child td { border-bottom: none; }
-        .class-table tr:hover td { background: #fafafa; }
-        .class-badge {
-            display: inline-block; background: #e8f0fe; color: #1967d2;
-            padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500;
-        }
-        .validity-input {
-            padding: 7px 10px;
-            border: 1.5px solid #e0e0e0; border-radius: 5px;
-            font-size: 13px; width: 175px; transition: border-color 0.2s;
-        }
-        .validity-input:focus { outline: none; border-color: #4285f4; }
-        .validity-input.skip { border-color: #ea4335; color: #999; }
-        .skip-label { font-size: 11px; color: #ea4335; margin-left: 4px; }
+.step-hdr { display: flex; align-items: center; margin-bottom: 14px; }
+.step-num {
+    min-width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; margin-right: 12px;
+    background: #ddd; color: #888;
+}
+.step.active .step-num  { background: #4285f4; color: white; }
+.step.done   .step-num  { background: #34a853; color: white; }
+.step.done   .step-num::after { content: "✓"; }
+.step.done   .step-num .num   { display: none; }
+.step-title { font-size: 1.05em; font-weight: 600; }
+.step-sub   { font-size: 12px; color: #999; margin-left: 5px; }
 
-        /* ── Progress bar ── */
-        .progress-wrap  { margin: 12px 0; }
-        .progress-bar   { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
-        .progress-fill  {
-            height: 100%; background: #4285f4; border-radius: 4px;
-            transition: width 0.5s ease; width: 0%;
-        }
-        .progress-label { font-size: 12px; color: #666; margin-top: 5px; }
+/* Locked overlay message */
+.locked-msg {
+    text-align: center; padding: 20px; color: #aaa; font-size: 14px;
+}
 
-        /* ── Result box ── */
-        .result-box {
-            background: linear-gradient(135deg, #34a853 0%, #0d652d 100%);
-            color: white; padding: 28px; border-radius: 12px; text-align: center; margin-top: 15px;
-        }
-        .result-box.has-errors {
-            background: linear-gradient(135deg, #f9a825 0%, #e65100 100%);
-        }
-        .result-box h3 { font-size: 1.5em; margin-bottom: 8px; }
-        .result-stats { display: flex; justify-content: center; gap: 14px; margin: 16px 0; flex-wrap: wrap; }
-        .result-stat {
-            background: rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 20px; font-size: 14px;
-        }
-        .result-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 18px 0 8px; }
-        .result-btn {
-            display: inline-block; background: white; padding: 13px 22px;
-            border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;
-            cursor: pointer; border: none; transition: transform 0.2s; white-space: nowrap;
-        }
-        .result-btn:hover { transform: scale(1.04); }
-        .result-btn.green  { color: #137333; }
-        .result-btn.blue   { color: #1967d2; }
+/* ── Buttons ── */
+.btn {
+    display: inline-block; padding: 10px 20px;
+    border-radius: 6px; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600; margin: 4px 4px 4px 0;
+    text-decoration: none; transition: filter 0.15s;
+}
+.btn:hover:not(:disabled) { filter: brightness(0.92); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-blue   { background: #4285f4; color: white; }
+.btn-green  { background: #34a853; color: white; }
+.btn-yellow { background: #fbbc04; color: #333; }
+.btn-lg     { font-size: 16px; padding: 14px 36px; }
 
-        /* ── Download instructions ── */
-        .dl-steps {
-            background: white; border-radius: 10px; padding: 20px;
-            margin-top: 16px; box-shadow: 0 1px 5px rgba(0,0,0,0.07);
-        }
-        .dl-steps h4 { font-size: 15px; color: #333; margin-bottom: 12px; }
-        .dl-step-list { counter-reset: dl; list-style: none; padding: 0; }
-        .dl-step-list li {
-            counter-increment: dl;
-            display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; font-size: 14px;
-        }
-        .dl-step-list li::before {
-            content: counter(dl);
-            background: #4285f4; color: white;
-            min-width: 24px; height: 24px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
-        }
+/* ── Input rows ── */
+.input-row { display: flex; gap: 10px; margin: 8px 0; }
+.input-row input {
+    flex: 1; padding: 10px 13px;
+    border: 2px solid #ddd; border-radius: 6px; font-size: 14px;
+}
+.input-row input:focus { outline: none; border-color: #4285f4; }
 
-        /* ── Error list ── */
-        .error-list {
-            max-height: 160px; overflow-y: auto;
-            background: rgba(0,0,0,0.15); border-radius: 6px;
-            padding: 10px; margin-top: 8px; text-align: left;
-        }
-        .error-list div { font-size: 12px; padding: 2px 0; }
+/* ── Status bars ── */
+.status-bar {
+    margin: 10px 0; padding: 10px 14px;
+    border-radius: 6px; font-size: 13px;
+}
+.status-bar.hidden  { display: none; }
+.status-bar.info    { background: #e8f0fe; color: #1967d2; }
+.status-bar.success { background: #e6f4ea; color: #137333; }
+.status-bar.error   { background: #fce8e6; color: #c5221f; }
+.status-bar.warning { background: #fef7e0; color: #b06000; }
 
-        /* ── Help sections ── */
-        details { margin-top: 12px; }
-        details summary {
-            cursor: pointer; padding: 10px 14px;
-            background: #f1f3f4; border-radius: 8px;
-            color: #555; font-size: 13px; list-style: none;
-        }
-        details summary::-webkit-details-marker { display: none; }
-        details[open] summary { border-radius: 8px 8px 0 0; }
-        .help-content {
-            background: #fafafa; border-radius: 0 0 8px 8px;
-            padding: 14px; font-size: 13px; color: #555;
-        }
-        .help-content ul { padding-left: 18px; margin: 6px 0; }
-        .help-content li { margin: 4px 0; }
-        .help-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
-        .help-table td { padding: 7px 10px; border-bottom: 1px solid #e8e8e8; font-size: 12px; }
-        .help-table td:first-child { width: 160px; font-weight: 500; white-space: nowrap; }
-        code {
-            background: #e8e8e8; padding: 1px 6px;
-            border-radius: 3px; font-family: monospace; font-size: 12px;
-        }
+/* ── Callout boxes ── */
+.callout {
+    border-left: 4px solid #ffc107; background: #fff8e1;
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    margin: 10px 0; font-size: 13px; color: #555;
+}
+.callout.blue  { border-color: #4285f4; background: #e8f0fe; color: #1967d2; }
+.callout.green { border-color: #34a853; background: #e6f4ea; color: #137333; }
+.callout.red   { border-color: #ea4335; background: #fce8e6; color: #c5221f; }
 
-        .footer {
-            text-align: center; padding: 24px; color: #999; font-size: 12px; margin-top: 10px;
-        }
+/* ── Class validity table ── */
+.vtable { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+.vtable th {
+    background: #f1f3f4; padding: 9px 11px; text-align: left;
+    font-weight: 600; color: #444; border-bottom: 2px solid #e0e0e0;
+}
+.vtable td { padding: 8px 11px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.vtable tr:last-child td { border-bottom: none; }
+.cbadge {
+    display: inline-block; background: #e8f0fe; color: #1967d2;
+    padding: 2px 10px; border-radius: 12px; font-size: 12px;
+    font-weight: 500; font-family: monospace;
+}
+.val-inp {
+    padding: 7px 9px; border: 1.5px solid #ddd; border-radius: 5px;
+    font-size: 13px; width: 180px; font-family: monospace;
+}
+.val-inp:focus { outline: none; border-color: #4285f4; }
+.val-inp.ok   { border-color: #34a853; background: #f8fff9; }
+.val-inp.skip { border-color: #ea4335; color: #bbb; }
 
-        .stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
-        .stat {
-            background: #f1f3f4; padding: 4px 12px; border-radius: 15px; font-size: 12px;
-        }
+/* ── Progress ── */
+.prog-wrap { margin: 10px 0; }
+.prog-bar  { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+.prog-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #4285f4, #34a853);
+    width: 0%; transition: width 0.5s ease;
+}
+.prog-label { font-size: 12px; color: #666; margin-top: 4px; }
 
-        @media (max-width: 600px) {
-            .step-content { margin-left: 0; margin-top: 12px; }
-            .input-group { flex-direction: column; }
-            .result-buttons { flex-direction: column; }
-        }
-    </style>
+/* ── Result box ── */
+.result-box {
+    border-radius: 10px; padding: 22px; color: white;
+    text-align: center; margin-top: 12px;
+    background: linear-gradient(135deg, #34a853, #1a7a37);
+}
+.result-box.warn { background: linear-gradient(135deg, #f9a825, #e65100); }
+.result-box h3   { font-size: 1.3em; margin-bottom: 8px; }
+.result-stats    { display: flex; justify-content: center; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+.result-stat     { background: rgba(255,255,255,0.22); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+.result-btns     { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 14px 0 6px; }
+.result-link {
+    background: white; padding: 11px 18px; border-radius: 7px;
+    text-decoration: none; font-weight: 600; font-size: 14px; transition: transform 0.15s;
+}
+.result-link:hover { transform: scale(1.04); }
+.result-link.green { color: #137333; }
+.result-link.blue  { color: #1967d2; }
+.err-log {
+    max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.18);
+    border-radius: 5px; padding: 9px; margin-top: 9px; text-align: left; font-size: 12px;
+}
+
+/* ── Download card ── */
+.dl-card {
+    background: white; border-radius: 9px; padding: 18px;
+    margin-top: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+}
+.dl-card h4 { font-size: 14px; margin-bottom: 12px; color: #333; }
+.dl-list { list-style: none; padding: 0; counter-reset: dl; }
+.dl-list li {
+    counter-increment: dl; display: flex; gap: 11px;
+    align-items: flex-start; margin-bottom: 10px; font-size: 13px; line-height: 1.5;
+}
+.dl-list li::before {
+    content: counter(dl); background: #4285f4; color: white;
+    min-width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+}
+
+/* ── Accordion ── */
+.acc { border: 1px solid #e8e8e8; border-radius: 7px; overflow: hidden; margin-top: 12px; }
+.acc + .acc { margin-top: 6px; }
+.acc-btn {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 14px; background: #f8f9fa; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: #444; text-align: left;
+}
+.acc-btn:hover { background: #f1f3f4; }
+.acc-body { display: none; padding: 14px; background: #fafafa; font-size: 13px; color: #555; line-height: 1.6; }
+.acc-body.open { display: block; }
+
+/* ── Help tables ── */
+.htbl { width: 100%; border-collapse: collapse; margin: 8px 0; }
+.htbl td { padding: 7px 9px; border-bottom: 1px solid #eee; font-size: 12px; vertical-align: top; }
+.htbl td:first-child { width: 185px; font-weight: 600; color: #333; white-space: nowrap; }
+.htbl tr:last-child td { border-bottom: none; }
+
+code {
+    background: #e8e8e8; padding: 1px 5px;
+    border-radius: 3px; font-family: monospace; font-size: 12px;
+}
+pre {
+    background: #f1f3f4; padding: 11px; border-radius: 6px;
+    font-size: 12px; overflow-x: auto; line-height: 1.7; margin: 8px 0;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chip { background: #f1f3f4; padding: 3px 11px; border-radius: 12px; font-size: 12px; }
+.chip.red { background: #fce8e6; color: #c5221f; }
+
+.footer { text-align: center; padding: 22px; color: #bbb; font-size: 12px; }
+
+@media (max-width: 580px) {
+    .input-row { flex-direction: column; }
+    .result-btns { flex-direction: column; }
+}
+</style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
     <h1>🪪 Student ID Card Generator</h1>
-    <p class="subtitle">Swiss Educational College — Build student list + photo ZIP automatically</p>
+    <p>Swiss Educational College — generate student list + photo ZIP automatically</p>
 </div>
 
-<!-- ═══════════════════════════════ SETTINGS ════════════════════════════════ -->
-<div class="settings-panel">
-    <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">
-        <span>⚙️ Settings <span class="settings-saved" id="settingsSaved">✓ Saved</span></span>
-        <span class="arrow">▼</span>
+<!-- ═══════════════════ SETTINGS ══════════════════════════════════════════ -->
+<div class="settings-panel" id="settingsPanel">
+    <button class="settings-toggle" onclick="toggleSettings()">
+        <span>
+            ⚙️ Settings
+            <span class="s-badge warn" id="sBadge">⚠ Setup required — click to open</span>
+        </span>
+        <span class="s-arrow" id="sArrow">▲</span>
     </button>
+
     <div class="settings-body" id="settingsBody">
-        <p style="font-size:13px;color:#777;margin-bottom:16px;">
-            These are saved in your browser. You only need to configure this once.
-        </p>
+        <div class="callout blue">
+            <strong>One-time setup.</strong> Enter both URLs and click Save — they are remembered in your browser for future visits.
+        </div>
 
-        <label style="display:block;font-weight:600;font-size:13px;margin-bottom:5px;color:#333;">
+        <label class="field-label" for="inWebApp">
             🔗 Apps Script Web App URL
+            <small>— the backend that reads your sheets and copies photos</small>
         </label>
-        <div class="input-group">
-            <input type="url" id="webAppUrl" placeholder="https://script.google.com/macros/s/……/exec" />
-        </div>
+        <input class="url-input" type="url" id="inWebApp"
+               placeholder="https://script.google.com/macros/s/AKfycb…/exec"
+               oninput="onSettingsChange()" />
 
-        <label style="display:block;font-weight:600;font-size:13px;margin:14px 0 5px;color:#333;">
-            📋 Photo Index Sheet URL
-            <span style="font-weight:400;color:#999;font-size:12px;">(Sheet1 — Col B = Email, Col C = Drive photo link)</span>
+        <label class="field-label" for="inSheet1">
+            📋 Photo Index Sheet URL (Sheet1)
+            <small>— Col A = Name, Col B = Email, Col C = Drive photo link</small>
         </label>
-        <div class="input-group">
-            <input type="url" id="sheet1Url" placeholder="https://docs.google.com/spreadsheets/d/…" />
+        <input class="url-input" type="url" id="inSheet1"
+               placeholder="https://docs.google.com/spreadsheets/d/…"
+               oninput="onSettingsChange()" />
+
+        <div style="margin-top:14px; display:flex; align-items:center; gap:12px;">
+            <button class="btn btn-yellow" onclick="saveSettings()">💾 Save Settings</button>
+            <span id="savedOk" style="color:#137333; font-size:13px; display:none;">✓ Saved!</span>
         </div>
 
-        <div class="info-box" style="margin-top:12px;">
-            <strong>Sheet1 structure:</strong>
-            Col A = Name (ignored) &nbsp;│&nbsp; Col B = School Email &nbsp;│&nbsp;
-            Col C = Google Drive photo link (<code>thumbnail?id=…</code> format is fine)
+        <!-- Settings accordion help -->
+        <div class="acc" style="margin-top:16px;">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                📋 How to create the Apps Script and get the Web App URL <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <p style="margin-bottom:8px;">The Apps Script is a Google-hosted backend. You set it up once:</p>
+                <ol style="padding-left:18px; line-height:2.1;">
+                    <li>Open any Google Spreadsheet → <strong>Extensions → Apps Script</strong></li>
+                    <li>Delete any placeholder code</li>
+                    <li>Paste the full contents of <code>StudentIDCards.gs</code> → Save (<kbd>Ctrl+S</kbd>)</li>
+                    <li>Click <strong>Deploy → New deployment</strong></li>
+                    <li>Click the ⚙️ gear icon → select <strong>Web app</strong></li>
+                    <li>Set <em>Execute as</em>: <strong>Me</strong></li>
+                    <li>Set <em>Who has access</em>: <strong>Anyone</strong></li>
+                    <li>Click <strong>Deploy</strong> → grant permissions when prompted</li>
+                    <li>Copy the <strong>Web app URL</strong> (starts with <code>https://script.google.com/macros/s/</code>)</li>
+                    <li>Paste it in the Apps Script URL field above → click <strong>💾 Save Settings</strong></li>
+                </ol>
+                <div class="callout" style="margin-top:10px;">
+                    ⚠️ <strong>After any future script change:</strong> Deploy → Manage deployments → ✏️ Edit → select <em>New version</em> → Deploy. Skipping this means the old code keeps running.
+                </div>
+            </div>
         </div>
 
-        <button class="btn btn-save" onclick="saveSettings()" style="margin-top:8px;">💾 Save Settings</button>
+        <div class="acc">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                📷 Where is the Photo Index Sheet (Sheet1)? <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <p>Sheet1 is in the <strong>Metabase_Foto</strong> Google Drive folder. It maps each student's email to their photo file on Drive.</p>
+                <table class="htbl" style="margin-top:8px;">
+                    <tr><td>Col A</td><td>Student name — ignored by the script</td></tr>
+                    <tr><td>Col B</td><td>School email — e.g. <code>antony.aghilesh@student.swissedcol.ch</code></td></tr>
+                    <tr><td>Col C</td><td>Google Drive photo URL — thumbnail format is fine: <code>https://drive.google.com/thumbnail?id=…&sz=w200</code></td></tr>
+                </table>
+                <p style="margin-top:8px;">The Sheet1 spreadsheet must be accessible by the same Google account that runs the Apps Script. Open it → Share → add the Apps Script owner as Viewer if needed.</p>
+            </div>
+        </div>
 
-        <details style="margin-top:16px;">
-            <summary>❓ How to get the Apps Script Web App URL</summary>
-            <div class="help-content">
-                <ul>
-                    <li>Open your Google Spreadsheet → <strong>Extensions → Apps Script</strong></li>
-                    <li>Paste the <code>StudentIDCards.gs</code> code → Save</li>
-                    <li><strong>Deploy → New deployment → Web app</strong></li>
-                    <li>Execute as: <em>Me</em> &nbsp;|&nbsp; Who has access: <em>Anyone</em></li>
-                    <li>Click <strong>Deploy</strong> → copy the Web app URL → paste above</li>
-                    <li>⚠️ After <em>every</em> script change: re-deploy → <em>New version</em></li>
+        <div class="acc">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                ❌ Settings not saving / forgotten after refresh <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <ul style="padding-left:18px;">
+                    <li>You <strong>must click 💾 Save Settings</strong> — just typing in the fields is not enough</li>
+                    <li>Settings are stored in your browser's <em>localStorage</em> and survive page refreshes and tab closes on the same device and browser</li>
+                    <li>They are <strong>not</strong> saved in private/incognito windows — use a regular browser window</li>
+                    <li>If you clear browser data (cookies/cache), you will need to re-enter both URLs</li>
+                    <li>If the ⚠ badge still shows after clicking Save, check that both fields are filled in</li>
                 </ul>
             </div>
-        </details>
-    </div>
-</div>
-
-<!-- ═══════════════════════════ STEP 1: SHEET2 URL ═════════════════════════ -->
-<div class="step active" id="step1Card">
-    <div class="step-header">
-        <div class="step-number"><span>1</span></div>
-        <div class="step-title">Enter Class List (Sheet2)</div>
-    </div>
-    <div class="step-content">
-        <p style="font-size:13px;color:#555;margin-bottom:10px;">
-            Paste the URL of your master student list (Sheet2). Columns are auto-detected
-            by header name — the sheet needs headers:
-            <strong>Class</strong>, <strong>First Name Last Name</strong>,
-            <strong>School Email</strong>, <strong>Birthday</strong>.
-        </p>
-        <div class="input-group">
-            <input type="url" id="sheet2Url"
-                   placeholder="https://docs.google.com/spreadsheets/d/…"
-                   onkeydown="if(event.key==='Enter') loadClasses()" />
-            <button class="btn btn-primary" onclick="loadClasses()" id="loadBtn">Load Classes →</button>
         </div>
-        <div id="step1Status" class="status"></div>
 
-        <details>
-            <summary>❓ Troubleshooting</summary>
-            <div class="help-content">
-                <table class="help-table">
-                    <tr><td>❌ "Cannot open"</td><td>Make sure the Google account running the Apps Script has access to this sheet</td></tr>
-                    <tr><td>❌ "Class column not found"</td><td>Make sure row 1 has exactly these headers: <code>Class</code>, <code>First Name Last Name</code>, <code>School Email</code>, <code>Birthday</code></td></tr>
-                    <tr><td>❌ "Apps Script URL not set"</td><td>Open ⚙️ Settings above and save your Web App URL first</td></tr>
-                    <tr><td>❌ CORS / network error</td><td>Re-deploy the Apps Script as a new version and try again</td></tr>
+    </div><!-- /settings-body -->
+</div><!-- /settings-panel -->
+
+
+<!-- ═══════════════════ STEP 1 ════════════════════════════════════════════ -->
+<div class="step active" id="step1">
+    <div class="step-hdr">
+        <div class="step-num"><span class="num">1</span></div>
+        <div><span class="step-title">Load Class List</span> <span class="step-sub">(Sheet2)</span></div>
+    </div>
+
+    <p style="font-size:13px;color:#555;margin-bottom:10px;">
+        Paste the URL of your master student list. Columns are found automatically by header name —
+        no need to worry about column positions.<br>
+        <strong>Required headers:</strong> <code>Class</code> · <code>First Name Last Name</code> · <code>School Email</code> · <code>Birthday</code>
+    </p>
+
+    <div class="input-row">
+        <input type="url" id="inSheet2"
+               placeholder="https://docs.google.com/spreadsheets/d/…"
+               onkeydown="if(event.key==='Enter') loadClasses()" />
+        <button class="btn btn-blue" id="btnLoad" onclick="loadClasses()">Load Classes →</button>
+    </div>
+
+    <div class="status-bar hidden" id="st1"></div>
+
+    <div class="acc" style="margin-top:14px;">
+        <button class="acc-btn" onclick="toggleAcc(this)">
+            ❓ "Load Classes" button not working — what to check <span>▼</span>
+        </button>
+        <div class="acc-body">
+            <table class="htbl">
+                <tr>
+                    <td>Button does nothing</td>
+                    <td>The Apps Script URL must be saved first. Open <strong>⚙️ Settings</strong> at the top, paste the Web App URL, and click <strong>💾 Save Settings</strong>. The tool cannot contact Google without it.</td>
+                </tr>
+                <tr>
+                    <td>❌ Network / fetch error</td>
+                    <td>The Apps Script must be deployed as a Web App with <em>Who has access: Anyone</em>. Go to Apps Script → <strong>Deploy → Manage deployments → Edit → New version → Deploy</strong>. Also make sure you are using the latest <code>StudentIDCards.gs</code> file (v5, which uses <code>doGet</code> instead of <code>doPost</code>).</td>
+                </tr>
+                <tr>
+                    <td>❌ "Cannot open Sheet2"</td>
+                    <td>The Google account running the Apps Script must have access to Sheet2. Open Sheet2 → Share → add the Apps Script owner's email as Viewer.</td>
+                </tr>
+                <tr>
+                    <td>❌ "Class column not found"</td>
+                    <td>Row 1 of Sheet2 must have header cells. The header <code>Class</code> must exist (case-insensitive). Check for extra spaces or typos in the header row.</td>
+                </tr>
+                <tr>
+                    <td>⚠️ 0 students found</td>
+                    <td>Rows with no <code>@</code> in the email column are skipped. Check that the <code>School Email</code> column is correctly labelled and populated.</td>
+                </tr>
+                <tr>
+                    <td>❌ "Invalid URL"</td>
+                    <td>Copy the full URL from your browser address bar while Sheet2 is open. It must start with <code>https://docs.google.com/spreadsheets/d/</code>.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="acc">
+        <button class="acc-btn" onclick="toggleAcc(this)">
+            📋 Required Sheet2 structure and column details <span>▼</span>
+        </button>
+        <div class="acc-body">
+            <p style="margin-bottom:8px;">Sheet2 needs a <strong>header row (row 1)</strong>. Any extra columns are ignored. The four columns below are required:</p>
+            <table class="htbl">
+                <tr>
+                    <td><code>Class</code></td>
+                    <td>Full class name — e.g. <code>26-T1-Class-BBA</code> or <code>25-T4-Class-MBA</code>. The prefix before "Class-" is used to group students and assign validity periods.</td>
+                </tr>
+                <tr>
+                    <td><code>First Name Last Name</code></td>
+                    <td>Combined name in one column. Nicknames in dashes are stripped automatically:<br>
+                        <code>-Ann- Thi Dung Phung</code> → <code>Thi Dung Phung</code><br>
+                        <code>Phan -Annabelle- Thi Bich Ngan</code> → <code>Phan Thi Bich Ngan</code><br>
+                        <code>- Phuong Anh Pham</code> → <code>Phuong Anh Pham</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>School Email</code></td>
+                    <td>Unique student identifier used to match with the Photo Index. Must contain <code>@</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>Birthday</code></td>
+                    <td>Any date format is accepted: <code>10/08/2006</code>, <code>10.08.2006</code>, <code>2006-08-10</code>. Output is always <code>DD/MM/YYYY</code>.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div><!-- /step1 -->
+
+
+<!-- ═══════════════════ STEP 2 ════════════════════════════════════════════ -->
+<div class="step locked" id="step2">
+    <div class="step-hdr">
+        <div class="step-num"><span class="num">2</span></div>
+        <div><span class="step-title">Set Validity Periods</span></div>
+    </div>
+
+    <!-- Locked placeholder — shown until step 1 succeeds -->
+    <div id="step2locked" class="locked-msg">
+        🔒 Complete Step 1 first — classes will appear here automatically
+    </div>
+
+    <!-- Actual content — hidden until step 1 succeeds -->
+    <div id="step2content" style="display:none;">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">
+            Students are grouped by class prefix. Set the validity period for each group in
+            <code>MM/YYYY-MM/YYYY</code> format. Leave blank to <strong>skip</strong> that group (those students won't appear in the output).
+        </p>
+
+        <table class="vtable">
+            <thead><tr>
+                <th>Class Prefix</th>
+                <th>Students</th>
+                <th>Validity Period</th>
+                <th></th>
+            </tr></thead>
+            <tbody id="classBody"></tbody>
+        </table>
+
+        <div class="status-bar hidden" id="st2"></div>
+        <div class="chips" id="classChips"></div>
+
+        <div class="acc" style="margin-top:12px;">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                ❓ What are validity periods? How are they formatted? <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <p>The validity period appears on the ID card to show when it is valid. It is based on the student's intake term:</p>
+                <table class="htbl" style="margin:8px 0;">
+                    <tr><td><code>25-T3-Class-…</code></td><td>Intake July 2025 → validity <code>07/2025-06/2026</code></td></tr>
+                    <tr><td><code>25-T4-Class-…</code></td><td>Intake October 2025 → validity <code>10/2025-09/2026</code></td></tr>
+                    <tr><td><code>26-T1-Class-…</code></td><td>Intake January 2026 → validity <code>01/2026-12/2026</code></td></tr>
+                    <tr><td><code>26-T2-Class-…</code></td><td>Intake April 2026 → validity <code>04/2026-03/2027</code></td></tr>
+                </table>
+                <p>Values are pre-filled automatically. You can edit any field — format must be <code>MM/YYYY-MM/YYYY</code>.</p>
+                <p style="margin-top:6px;">To add a new term permanently for future use, edit the <code>DEFAULT_VALIDITY</code> object at the top of the <code>&lt;script&gt;</code> in <code>index.html</code>.</p>
+            </div>
+        </div>
+    </div>
+</div><!-- /step2 -->
+
+
+<!-- ═══════════════════ STEP 3 ════════════════════════════════════════════ -->
+<div class="step locked" id="step3">
+    <div class="step-hdr">
+        <div class="step-num"><span class="num">3</span></div>
+        <div><span class="step-title">Generate &amp; Download</span></div>
+    </div>
+
+    <!-- Locked placeholder -->
+    <div id="step3locked" class="locked-msg">
+        🔒 Complete Steps 1 &amp; 2 first
+    </div>
+
+    <!-- Actual content -->
+    <div id="step3content" style="display:none;">
+        <p style="font-size:13px;color:#555;margin-bottom:6px;">
+            The Apps Script will: <strong>(1)</strong> match each student's email to their photo in Sheet1,
+            <strong>(2)</strong> copy &amp; rename all photos to a new Drive folder,
+            <strong>(3)</strong> write the formatted student list sheet with clickable relative photo links.
+        </p>
+        <p style="font-size:13px;color:#c5221f;margin-bottom:16px;">
+            ⏱ Takes <strong>1–3 minutes</strong> for ~90 students. <strong>Do not close this tab</strong> while it runs.
+        </p>
+
+        <div style="text-align:center; margin-bottom:14px;">
+            <button class="btn btn-green btn-lg" id="btnGen" onclick="generate()">⚡ Generate Now</button>
+        </div>
+
+        <div id="progWrap" style="display:none;" class="prog-wrap">
+            <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+            <div class="prog-label" id="progLabel">Starting…</div>
+        </div>
+
+        <div class="status-bar hidden" id="st3"></div>
+        <div id="result"></div>
+
+        <div class="acc" style="margin-top:16px;">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                ❓ Generate failed — error messages explained <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <table class="htbl">
+                    <tr>
+                        <td>❌ "Failed to fetch" / network error</td>
+                        <td>The Apps Script is not responding to GET requests. Ensure you have the latest <code>StudentIDCards.gs</code> (uses <code>doGet</code>) and have <strong>re-deployed as a New version</strong>. The previous version used <code>doPost</code> which is blocked by browsers when called from GitHub Pages.</td>
+                    </tr>
+                    <tr>
+                        <td>❌ "0 students matched"</td>
+                        <td>No class prefixes in Sheet2 match entries in the validity table. Check Step 2 — at least one row must have a filled validity period.</td>
+                    </tr>
+                    <tr>
+                        <td>⚠️ Many "photo not in index"</td>
+                        <td>Those students are in Sheet2 but not in Sheet1. Open Sheet1 and add a row for each missing student: Col B = email, Col C = Drive photo thumbnail URL. Then re-run — already-copied photos are skipped.</td>
+                    </tr>
+                    <tr>
+                        <td>❌ "Cannot access file"</td>
+                        <td>A photo Drive file is not shared with the Apps Script owner. The owner needs at least Viewer access to the file or its parent folder.</td>
+                    </tr>
+                    <tr>
+                        <td>⏱ Times out at ~6 min</td>
+                        <td>Google Apps Script has a 6-minute execution limit. For 100+ students, blank half the validity periods (those students are skipped), run, then restore and run again. Already-copied photos are never re-downloaded so there is no duplication.</td>
+                    </tr>
+                    <tr>
+                        <td>⚠️ 0 photos copied</td>
+                        <td>Check that the Photo Index URL in Settings points to Sheet1 (not Sheet2) and that Col C contains Google Drive URLs (must include <code>drive.google.com</code>).</td>
+                    </tr>
                 </table>
             </div>
-        </details>
-    </div>
-</div>
-
-<!-- ══════════════════════ STEP 2: VALIDITY CONFIG ═════════════════════════ -->
-<div class="step" id="step2Card" style="display:none">
-    <div class="step-header">
-        <div class="step-number"><span>2</span></div>
-        <div class="step-title">Set Validity Periods</div>
-    </div>
-    <div class="step-content">
-        <p style="font-size:13px;color:#555;margin-bottom:10px;">
-            Classes are grouped by prefix. Set a validity period for each group
-            (<code>MM/YYYY-MM/YYYY</code>). Leave blank to <strong>skip</strong> that group.
-        </p>
-
-        <table class="class-table" id="classTable">
-            <thead>
-                <tr>
-                    <th>Class Prefix</th>
-                    <th>Students</th>
-                    <th>Validity Period</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="classTableBody"></tbody>
-        </table>
-
-        <div id="validityNote" class="info-box"></div>
-
-        <div class="stats" id="classSummaryStats" style="margin-top:10px;"></div>
-    </div>
-</div>
-
-<!-- ══════════════════════════ STEP 3: GENERATE ════════════════════════════ -->
-<div class="step" id="step3Card" style="display:none">
-    <div class="step-header">
-        <div class="step-number"><span>3</span></div>
-        <div class="step-title">Generate &amp; Download</div>
-    </div>
-    <div class="step-content">
-        <p style="font-size:13px;color:#555;margin-bottom:16px;">
-            The Apps Script will copy &amp; rename all student photos to a Drive folder
-            and create the formatted student list with clickable relative photo links.
-            This takes <strong>1–3 minutes</strong> depending on student count.
-        </p>
-
-        <div style="text-align:center;margin-bottom:16px;">
-            <button class="btn btn-success btn-large" onclick="generate()" id="generateBtn">
-                ⚡ Generate Now
-            </button>
         </div>
 
-        <div id="progressWrap" style="display:none;">
-            <div class="progress-wrap">
-                <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                <div class="progress-label" id="progressLabel">Connecting…</div>
+        <div class="acc">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                📥 How to download and assemble the final package <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <p style="margin-bottom:10px;">After a successful run, two green/blue buttons appear. Here is what to do:</p>
+                <ol style="padding-left:18px; line-height:2.1;">
+                    <li>Click <strong>Open Student List</strong> → in Google Sheets: <strong>File → Download → Microsoft Excel (.xlsx)</strong> → save to a local folder (e.g. <code>StudentIDCards/</code>)</li>
+                    <li>Click <strong>Open Photos Folder</strong> → in Google Drive: right-click the folder → <strong>Download</strong> → Google creates a ZIP → save and unzip it</li>
+                    <li><strong>Rename</strong> the unzipped folder to exactly <code>Photos</code> (capital P — Google adds a timestamp to the name)</li>
+                    <li>Move the <code>Photos</code> folder into <code>StudentIDCards/</code> so it sits <strong>next to</strong> the <code>.xlsx</code> file</li>
+                    <li>Open the Excel → click any cell in the <strong>Link_to_Cropped_Photo</strong> column → the photo opens locally 🎉</li>
+                    <li>Optional: ZIP the entire <code>StudentIDCards/</code> folder to share — links work on any machine</li>
+                </ol>
+                <pre>StudentIDCards/
+  ├── StudentIDCards.xlsx
+  └── Photos/                  ← must be named exactly "Photos"
+        ├── antony.aghilesh@student.swissedcol.ch.jpg
+        ├── sahil.koshiya@student.swissedcol.ch.jpg
+        └── …</pre>
+                <div class="callout" style="margin-top:8px;">
+                    ⚠️ The folder <strong>must</strong> be named <code>Photos</code> with a capital P. Google Drive downloads folders with a timestamp in the name (e.g. <code>Photos_20260220_1430</code>) — rename it before opening the Excel file or the links will not resolve.
+                </div>
             </div>
         </div>
 
-        <div id="step3Status" class="status"></div>
-        <div id="resultArea"></div>
+        <div class="acc">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+                🔄 Re-running to fix missing photos <span>▼</span>
+            </button>
+            <div class="acc-body">
+                <ul style="padding-left:18px;">
+                    <li>Add the missing student rows to Sheet1 (Col B = email, Col C = Drive photo thumbnail URL)</li>
+                    <li>Click <strong>Generate Now</strong> again — the script checks the new <code>Photos_…</code> folder and skips files already copied</li>
+                    <li>A new <code>Photos_…</code> folder is created each run — download from the latest one</li>
+                    <li>The <code>ID_Cards_Output</code> sheet is fully replaced each run with the complete updated list</li>
+                    <li>There is no need to change anything in Steps 1 or 2 for a re-run</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div><!-- /step3 -->
+
+
+<!-- ═══════════════════ HOW IT WORKS ══════════════════════════════════════ -->
+<div class="acc" style="margin-bottom:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.07); overflow:hidden;">
+    <button class="acc-btn" onclick="toggleAcc(this)" style="font-size:14px; padding:14px 18px;">
+        ℹ️ How the whole system works — full overview <span>▼</span>
+    </button>
+    <div class="acc-body" style="background:white;">
+        <p style="margin-bottom:10px;"><strong>Three components work together:</strong></p>
+        <table class="htbl" style="margin-bottom:14px;">
+            <tr>
+                <td>📋 Sheet1<br><small style="font-weight:400;">(Photo Index)</small></td>
+                <td>Maps each student email to their Google Drive photo. Maintained by admin in the Metabase_Foto folder. The script reads Col B (email) and Col C (Drive thumbnail URL) to locate and copy each photo.</td>
+            </tr>
+            <tr>
+                <td>📊 Sheet2<br><small style="font-weight:400;">(Class List)</small></td>
+                <td>Master student list — one row per student with Class, Name, Email, Birthday. Only students in Sheet2 appear in the output. The class name determines the validity period.</td>
+            </tr>
+            <tr>
+                <td>⚙️ Apps Script<br><small style="font-weight:400;">(Backend)</small></td>
+                <td>Runs on Google's servers. Reads both sheets, copies and renames photos, writes the formatted output sheet with relative hyperlinks. No local installation required.</td>
+            </tr>
+        </table>
+
+        <p style="margin-bottom:8px;"><strong>What happens when you click Generate:</strong></p>
+        <ol style="padding-left:18px; line-height:2.1; margin-bottom:14px;">
+            <li>Reads all rows from Sheet1 → builds lookup: <em>email → Drive file ID</em> (extracted from the thumbnail URL)</li>
+            <li>Reads all rows from Sheet2 → filters to students whose class prefix matches a validity period</li>
+            <li>For each student: removes nickname patterns from the name, formats birthday as <code>DD/MM/YYYY</code></li>
+            <li>Looks up the student's email in the Sheet1 index → opens the Drive photo file → makes a copy named <code>email.jpg</code> → saves to a new <code>Photos_…</code> Drive folder</li>
+            <li>Writes the <code>ID_Cards_Output</code> sheet with 6 columns: Studies at | Name | School Email | Born | Validity | Link_to_Cropped_Photo</li>
+            <li>The photo column uses <code>=HYPERLINK("Photos/email.jpg","email.jpg")</code> — a relative path that works when the Photos folder is placed next to the Excel file</li>
+        </ol>
+
+        <p style="margin-bottom:6px;"><strong>Name cleaning examples:</strong></p>
+        <table class="htbl">
+            <tr><td><code>-Ann- Thi Dung Phung</code></td><td>→ <code>Thi Dung Phung</code></td></tr>
+            <tr><td><code>Phan -Annabelle- Thi Bich Ngan</code></td><td>→ <code>Phan Thi Bich Ngan</code></td></tr>
+            <tr><td><code>- Phuong Anh Pham</code></td><td>→ <code>Phuong Anh Pham</code></td></tr>
+        </table>
+
+        <p style="margin-top:12px; margin-bottom:6px;"><strong>Output sheet columns:</strong></p>
+        <table class="htbl">
+            <tr><td>Studies at</td><td>Always "Swiss Educational College"</td></tr>
+            <tr><td>Name</td><td>Cleaned full name</td></tr>
+            <tr><td>School Email</td><td>The student's email address</td></tr>
+            <tr><td>Born</td><td>Birthday in <code>DD/MM/YYYY</code> format</td></tr>
+            <tr><td>Validity</td><td>Card validity period in <code>MM/YYYY-MM/YYYY</code> format</td></tr>
+            <tr><td>Link_to_Cropped_Photo</td><td>Clickable relative link to the renamed photo — works offline once Photos folder is placed next to the Excel file</td></tr>
+        </table>
     </div>
 </div>
 
-<!-- ════════════════════════ HOW IT WORKS ══════════════════════════════════ -->
-<details>
-    <summary>ℹ️ How it works &amp; final folder structure</summary>
-    <div class="help-content">
-        <p style="margin-bottom:10px;">After generating, you download two things from Google Drive and combine them:</p>
-        <table class="help-table">
-            <tr><td>📊 Student list</td><td>Open the output sheet link → <strong>File → Download → Microsoft Excel (.xlsx)</strong></td></tr>
-            <tr><td>📁 Photos folder</td><td>Open the Photos folder link → right-click → <strong>Download</strong> → unzip</td></tr>
-            <tr><td>🗂️ Combine</td><td>Place the <code>Photos/</code> folder next to the <code>.xlsx</code> file</td></tr>
-            <tr><td>🔗 Open</td><td>Open Excel → click any cell in the last column → photo opens locally</td></tr>
-        </table>
-        <p style="margin-top:12px;"><strong>Final structure (ZIP this for distribution):</strong></p>
-        <pre style="background:#f1f3f4;padding:10px;border-radius:6px;font-size:12px;margin-top:6px;">StudentIDCards/
-  ├── StudentIDCards.xlsx
-  └── Photos/
-        ├── <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1d0dfc5dedfc89fd0d6d9d8ddd4c2d9f1c2c5c4d5d4dfc59fc2c6d8c2c2d4d5d2dedd9fd2d99fdbc1d6">[email&#160;protected]</a>
-        ├── <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="60120108150c4e0107120117010c2013141504050e144e13170913130504030f0c4e03084e0a1007">[email&#160;protected]</a>
-        └── …</pre>
-        <p style="margin-top:10px;font-size:12px;color:#888;">
-            The HYPERLINK formula in Excel uses a relative path (<code>Photos/email.jpg</code>),
-            so links work on any computer as long as the folder structure is kept intact.
-        </p>
-    </div>
-</details>
+<div class="footer">Swiss Educational College · Student ID Card Generator</div>
 
-<div class="footer">Swiss Educational College &nbsp;·&nbsp; Student ID Card Generator</div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ═══════════════════════════════════════════════════════════════════════════
-// DEFAULTS — add new intake terms here
-// ═══════════════════════════════════════════════════════════════════════════
-const DEFAULT_VALIDITY = {
+<!-- ═══════════════════ SCRIPT ════════════════════════════════════════════ -->
+<script>
+// Default validity per term prefix — edit here to add new intakes
+var DEFAULT_VALIDITY = {
     '25-T3-': '07/2025-06/2026',
     '25-T4-': '10/2025-09/2026',
     '26-T1-': '01/2026-12/2026',
     '26-T2-': '04/2026-03/2027',
     '26-T3-': '07/2026-06/2027',
+    '26-T4-': '10/2026-09/2027'
 };
 
-let WEB_APP_URL  = '';
-let SHEET1_URL   = '';
-let loadedClasses = [];
+var WEB_APP_URL = '';
+var SHEET1_URL  = '';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SETTINGS
-// ═══════════════════════════════════════════════════════════════════════════
-function loadSettings() {
+// ── Page init ─────────────────────────────────────────────────────────────
+window.onload = function() {
     WEB_APP_URL = localStorage.getItem('idcard_webapp') || '';
     SHEET1_URL  = localStorage.getItem('idcard_sheet1') || '';
-    document.getElementById('webAppUrl').value  = WEB_APP_URL;
-    document.getElementById('sheet1Url').value  = SHEET1_URL;
-    if (!WEB_APP_URL) openSettings();
-}
 
-function saveSettings() {
-    WEB_APP_URL = document.getElementById('webAppUrl').value.trim();
-    SHEET1_URL  = document.getElementById('sheet1Url').value.trim();
-    localStorage.setItem('idcard_webapp',  WEB_APP_URL);
-    localStorage.setItem('idcard_sheet1',  SHEET1_URL);
-    const el = document.getElementById('settingsSaved');
-    el.style.display = 'inline';
-    setTimeout(() => el.style.display = 'none', 2500);
-}
+    document.getElementById('inWebApp').value = WEB_APP_URL;
+    document.getElementById('inSheet1').value = SHEET1_URL;
 
+    if (WEB_APP_URL) document.getElementById('inWebApp').classList.add('set');
+    if (SHEET1_URL)  document.getElementById('inSheet1').classList.add('set');
+
+    updateBadge();
+
+    // Auto-open settings if not configured yet
+    if (!WEB_APP_URL || !SHEET1_URL) {
+        document.getElementById('settingsBody').classList.remove('hidden');
+        document.getElementById('sArrow').textContent = '▲';
+    } else {
+        document.getElementById('settingsBody').classList.add('hidden');
+        document.getElementById('sArrow').textContent = '▼';
+    }
+};
+
+// ── Settings ──────────────────────────────────────────────────────────────
 function toggleSettings() {
-    const body   = document.getElementById('settingsBody');
-    const toggle = document.getElementById('settingsToggle');
-    const open   = body.classList.toggle('open');
-    toggle.classList.toggle('open', open);
-}
-
-function openSettings() {
-    document.getElementById('settingsBody').classList.add('open');
-    document.getElementById('settingsToggle').classList.add('open');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// STEP 1 — Load classes
-// ═══════════════════════════════════════════════════════════════════════════
-async function loadClasses() {
-    const sheet2Url = document.getElementById('sheet2Url').value.trim();
-    if (!sheet2Url) { setStatus('step1Status', 'error', 'Please enter the Sheet2 URL.'); return; }
-
-    const webApp = document.getElementById('webAppUrl').value.trim() || WEB_APP_URL;
-    if (!webApp)  { setStatus('step1Status', 'error', '❌ Apps Script URL not configured — open ⚙️ Settings first.'); openSettings(); return; }
-    WEB_APP_URL = webApp;
-
-    setStatus('step1Status', 'info', '⏳ Connecting to Apps Script and reading class list…');
-    document.getElementById('loadBtn').disabled = true;
-
-    try {
-        const data = await callScript({ action: 'loadClasses', sheet2Url });
-        if (!data.success) throw new Error(data.error || 'Failed to load classes');
-
-        loadedClasses = data.classes;
-        renderClassTable(data.classes, data.totalStudents);
-
-        setStatus('step1Status', 'success',
-            `✅ Loaded ${data.totalStudents} students across ${data.classes.length} class group(s).`);
-
-        markDone('step1Card');
-        show('step2Card', true);
-        show('step3Card', true);
-        document.getElementById('step2Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    } catch (err) {
-        setStatus('step1Status', 'error', '❌ ' + err.message);
-        document.getElementById('step1Card').classList.add('error');
-    } finally {
-        document.getElementById('loadBtn').disabled = false;
+    var body  = document.getElementById('settingsBody');
+    var arrow = document.getElementById('sArrow');
+    if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        arrow.textContent = '▲';
+    } else {
+        body.classList.add('hidden');
+        arrow.textContent = '▼';
     }
 }
 
-function renderClassTable(classes, total) {
-    const tbody = document.getElementById('classTableBody');
+function saveSettings() {
+    WEB_APP_URL = document.getElementById('inWebApp').value.trim();
+    SHEET1_URL  = document.getElementById('inSheet1').value.trim();
+    localStorage.setItem('idcard_webapp', WEB_APP_URL);
+    localStorage.setItem('idcard_sheet1', SHEET1_URL);
+
+    document.getElementById('inWebApp').classList.toggle('set', !!WEB_APP_URL);
+    document.getElementById('inSheet1').classList.toggle('set', !!SHEET1_URL);
+    updateBadge();
+
+    var ok = document.getElementById('savedOk');
+    ok.style.display = 'inline';
+    setTimeout(function(){ ok.style.display = 'none'; }, 2500);
+}
+
+function onSettingsChange() {
+    document.getElementById('savedOk').style.display = 'none';
+}
+
+function updateBadge() {
+    var done  = WEB_APP_URL && SHEET1_URL;
+    var badge = document.getElementById('sBadge');
+    var panel = document.getElementById('settingsPanel');
+    badge.textContent = done ? '✓ Configured' : '⚠ Setup required — click to open';
+    badge.className   = 's-badge ' + (done ? 'good' : 'warn');
+    panel.className   = 'settings-panel' + (done ? ' ok' : '');
+}
+
+// ── Accordion ─────────────────────────────────────────────────────────────
+function toggleAcc(btn) {
+    var body = btn.nextElementSibling;
+    var open = body.classList.toggle('open');
+    // Flip the arrow (last child of btn)
+    var arrow = btn.querySelector('span:last-child');
+    if (arrow) arrow.textContent = open ? '▲' : '▼';
+}
+
+// ── Step 1: Load classes ──────────────────────────────────────────────────
+function loadClasses() {
+    var s2 = document.getElementById('inSheet2').value.trim();
+    var wa = document.getElementById('inWebApp').value.trim() || WEB_APP_URL;
+
+    if (!wa) {
+        showBar('st1', 'error',
+            '❌ Apps Script URL not saved. Open ⚙️ Settings at the top, paste your Web App URL, and click 💾 Save Settings.');
+        openSettings();
+        return;
+    }
+    WEB_APP_URL = wa;  // use whatever is currently in the field even if not saved yet
+
+    if (!s2) {
+        showBar('st1', 'error', '❌ Please paste your Sheet2 URL in the field above.'); return;
+    }
+    if (s2.indexOf('docs.google.com/spreadsheets') === -1) {
+        showBar('st1', 'error', '❌ That doesn\'t look like a Google Sheets URL. Copy it directly from your browser address bar while Sheet2 is open.'); return;
+    }
+
+    showBar('st1', 'info', '⏳ Connecting to Apps Script and reading Sheet2…');
+    document.getElementById('btnLoad').disabled = true;
+
+    callScript({ action: 'loadClasses', sheet2Url: s2 })
+        .then(function(data) {
+            if (!data.success) throw new Error(data.error || 'Unknown error returned by Apps Script');
+            buildClassTable(data.classes, data.totalStudents);
+            showBar('st1', 'success',
+                '✅ Found ' + data.totalStudents + ' students across ' + data.classes.length + ' class group(s). Review validity periods in Step 2 then generate.');
+            setStepDone('step1');
+            unlockStep('step2');
+            unlockStep('step3');
+            document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(function(e) {
+            showBar('st1', 'error', '❌ ' + e.message + ' — expand the troubleshooting section above for help.');
+            document.getElementById('step1').className = 'step errored';
+        })
+        .finally(function() {
+            document.getElementById('btnLoad').disabled = false;
+        });
+}
+
+function unlockStep(id) {
+    var step = document.getElementById(id);
+    step.className = 'step active';
+    var locked  = document.getElementById(id + 'locked');
+    var content = document.getElementById(id + 'content');
+    if (locked)  locked.style.display  = 'none';
+    if (content) content.style.display = 'block';
+}
+
+function setStepDone(id) {
+    document.getElementById(id).className = 'step done';
+}
+
+function buildClassTable(classes, total) {
+    var tbody = document.getElementById('classBody');
     tbody.innerHTML = '';
+    var inc = 0, skip = 0;
 
-    let included = 0, skipped = 0;
-
-    classes.forEach(cls => {
-        const defVal = guessValidity(cls.prefix);
-        if (defVal) included += cls.count; else skipped += cls.count;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><span class="class-badge">${esc(cls.prefix)}</span></td>
-            <td style="color:#666">${cls.count}</td>
-            <td>
-                <input type="text"
-                    class="validity-input${defVal ? '' : ' skip'}"
-                    id="val_${esc(cls.prefix)}"
-                    data-prefix="${esc(cls.prefix)}"
-                    value="${esc(defVal)}"
-                    placeholder="MM/YYYY-MM/YYYY" />
-                ${defVal ? '' : '<span class="skip-label">will be skipped</span>'}
-            </td>
-            <td style="font-size:12px;color:#888;">${defVal ? '✅' : '⚠️'}</td>`;
+    classes.forEach(function(c) {
+        var def = guessValidity(c.prefix);
+        if (def) inc += c.count; else skip += c.count;
+        var safeId = 'v_' + c.prefix.replace(/[^a-z0-9]/gi, '_');
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><span class="cbadge">' + esc(c.prefix) + '</span></td>' +
+            '<td style="color:#666;">' + c.count + '</td>' +
+            '<td>' +
+                '<input class="val-inp ' + (def ? 'ok' : 'skip') + '"' +
+                ' id="' + safeId + '"' +
+                ' data-prefix="' + esc(c.prefix) + '"' +
+                ' value="' + esc(def) + '"' +
+                ' placeholder="MM/YYYY-MM/YYYY"' +
+                ' oninput="onValChange(this)">' +
+                (def ? '' : ' <span style="font-size:11px;color:#ea4335;margin-left:6px;">will be skipped</span>') +
+            '</td>' +
+            '<td style="font-size:18px;">' + (def ? '✅' : '⚠️') + '</td>';
         tbody.appendChild(tr);
     });
 
-    // Attach live update so skip-label responds to typing
-    document.querySelectorAll('.validity-input').forEach(input => {
-        input.addEventListener('input', () => {
-            const hasVal = input.value.trim();
-            input.classList.toggle('skip', !hasVal);
-            const next = input.parentElement.nextElementSibling;
-            if (next) next.textContent = hasVal ? '✅' : '⚠️';
-        });
-    });
+    // Summary bar
+    if (skip > 0) {
+        showBar('st2', 'warning', '⚠️ ' + skip + ' student(s) in unrecognised groups — add a validity period to include them, or leave blank to skip.');
+    } else {
+        showBar('st2', 'success', '✅ All ' + total + ' students have a validity period assigned.');
+    }
 
-    document.getElementById('validityNote').innerHTML = skipped > 0
-        ? `⚠️ <strong>${skipped} student(s)</strong> in unrecognised class groups — add a validity period above to include them, or leave blank to skip.`
-        : `✅ All ${total} students have a validity period assigned.`;
+    document.getElementById('classChips').innerHTML =
+        '<div class="chip">👥 ' + total + ' total</div>' +
+        '<div class="chip">✅ ' + inc + ' included</div>' +
+        (skip ? '<div class="chip red">⚠️ ' + skip + ' skipped</div>' : '');
+}
 
-    document.getElementById('classSummaryStats').innerHTML = `
-        <div class="stat">👥 ${total} total students</div>
-        <div class="stat">✅ ${included} included</div>
-        ${skipped ? `<div class="stat" style="background:#fce8e6;color:#c5221f;">⚠️ ${skipped} skipped</div>` : ''}
-    `;
+function onValChange(inp) {
+    var v = inp.value.trim();
+    inp.classList.toggle('ok',   !!v);
+    inp.classList.toggle('skip', !v);
+    var icon = inp.closest('tr').cells[3];
+    if (icon) icon.textContent = v ? '✅' : '⚠️';
 }
 
 function guessValidity(prefix) {
-    // Match by term prefix e.g. "25-T4-" or "26-T1-"
-    for (const [key, val] of Object.entries(DEFAULT_VALIDITY)) {
-        if (prefix.startsWith(key) || key.startsWith(prefix.substring(0, 7))) return val;
+    for (var k in DEFAULT_VALIDITY) {
+        if (DEFAULT_VALIDITY.hasOwnProperty(k)) {
+            if (prefix.indexOf(k) === 0 || prefix.substring(0, 7) === k.substring(0, 7))
+                return DEFAULT_VALIDITY[k];
+        }
     }
     return '';
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STEP 2 — Generate
-// ═══════════════════════════════════════════════════════════════════════════
-async function generate() {
-    const sheet1Url = document.getElementById('sheet1Url').value.trim() || SHEET1_URL;
-    const sheet2Url = document.getElementById('sheet2Url').value.trim();
+// ── Step 3: Generate ──────────────────────────────────────────────────────
+function generate() {
+    var s1 = document.getElementById('inSheet1').value.trim() || SHEET1_URL;
+    var s2 = document.getElementById('inSheet2').value.trim();
 
-    if (!sheet1Url) {
-        setStatus('step3Status', 'error', '❌ Photo Index URL (Sheet1) not set — open ⚙️ Settings.');
-        openSettings(); return;
-    }
-    if (!sheet2Url) {
-        setStatus('step3Status', 'error', '❌ Sheet2 URL is missing — fill in Step 1.'); return;
-    }
-    if (!WEB_APP_URL) {
-        setStatus('step3Status', 'error', '❌ Apps Script URL not set — open ⚙️ Settings.');
-        openSettings(); return;
-    }
+    if (!WEB_APP_URL) { showBar('st3','error','❌ Apps Script URL not set — open ⚙️ Settings.'); openSettings(); return; }
+    if (!s1)          { showBar('st3','error','❌ Photo Index URL (Sheet1) not set — open ⚙️ Settings.'); openSettings(); return; }
+    if (!s2)          { showBar('st3','error','❌ Sheet2 URL missing — complete Step 1 first.'); return; }
 
-    // Collect validity map
-    const validityMap = {};
-    document.querySelectorAll('.validity-input').forEach(inp => {
-        const prefix = inp.getAttribute('data-prefix');
-        const val    = inp.value.trim();
-        if (prefix && val) validityMap[prefix] = val;
-    });
-
+    var validityMap = {};
+    var inputs = document.querySelectorAll('.val-inp');
+    for (var i = 0; i < inputs.length; i++) {
+        var p = inputs[i].getAttribute('data-prefix');
+        var v = inputs[i].value.trim();
+        if (p && v) validityMap[p] = v;
+    }
     if (!Object.keys(validityMap).length) {
-        setStatus('step3Status', 'error', '❌ No validity periods set — at least one class must be configured.'); return;
+        showBar('st3','error','❌ No validity periods configured — fill in at least one row in Step 2.'); return;
     }
 
-    document.getElementById('generateBtn').disabled = true;
-    document.getElementById('resultArea').innerHTML  = '';
-    show('progressWrap', true);
+    document.getElementById('btnGen').disabled = true;
+    document.getElementById('result').innerHTML = '';
+    document.getElementById('progWrap').style.display = 'block';
     setProgress(8, 'Sending request to Apps Script…');
-    setStatus('step3Status', 'info', '⏳ Processing — this takes 1–3 minutes. Do not close this tab.');
+    showBar('st3', 'info', '⏳ Processing — do not close this tab. This takes 1–3 minutes.');
 
-    try {
-        setProgress(20, 'Reading Sheet1 photo index…');
-        const res = await callScript({ action: 'generate', sheet1Url, sheet2Url, validityMap });
-        setProgress(100, 'Complete!');
-
-        if (!res.success) throw new Error(res.error || 'Generation failed');
-
-        setStatus('step3Status', 'success',
-            `✅ ${res.studentsCount} students processed — ${res.photoOk} photos copied, ${res.photoErrors?.length || 0} errors.`);
-
-        renderResult(res);
-        markDone('step3Card');
-        document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
-
-    } catch (err) {
-        show('progressWrap', false);
-        setProgress(0, '');
-        setStatus('step3Status', 'error', '❌ ' + err.message);
-        document.getElementById('step3Card').classList.add('error');
-    } finally {
-        document.getElementById('generateBtn').disabled = false;
-    }
+    callScript({ action: 'generate', sheet1Url: s1, sheet2Url: s2, validityMap: validityMap })
+        .then(function(res) {
+            setProgress(100, 'Complete!');
+            if (!res.success) throw new Error(res.error || 'Generation failed — check Apps Script execution log for details');
+            showBar('st3', 'success',
+                '✅ ' + res.studentsCount + ' students processed — ' +
+                res.photoOk + ' photos copied, ' + (res.photoErrors ? res.photoErrors.length : 0) + ' missing.');
+            renderResult(res);
+            setStepDone('step3');
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(function(e) {
+            document.getElementById('progWrap').style.display = 'none';
+            setProgress(0, '');
+            showBar('st3', 'error', '❌ ' + e.message);
+            document.getElementById('step3').className = 'step errored';
+        })
+        .finally(function() {
+            document.getElementById('btnGen').disabled = false;
+        });
 }
 
 function renderResult(res) {
-    const hasErrors = res.photoErrors && res.photoErrors.length > 0;
+    var errs     = res.photoErrors || [];
+    var hasErrs  = errs.length > 0;
+    var errBlock = hasErrs
+        ? '<div class="err-log"><strong style="font-size:11px;">Missing photos (' + errs.length + ') — add to Sheet1 and re-run:</strong><br>' +
+          errs.map(function(e){ return '<div>• ' + esc(e) + '</div>'; }).join('') + '</div>'
+        : '';
 
-    const errorBlock = hasErrors ? `
-        <div class="error-list">
-            <strong style="font-size:12px;">Missing photos (${res.photoErrors.length}):</strong><br>
-            ${res.photoErrors.map(e => `<div>• ${esc(e)}</div>`).join('')}
-        </div>` : '';
-
-    document.getElementById('resultArea').innerHTML = `
-        <div class="result-box ${hasErrors ? 'has-errors' : ''}">
-            <h3>${hasErrors ? '⚠️ Done with some missing photos' : '✅ Generation Complete!'}</h3>
-            <div class="result-stats">
-                <div class="result-stat">👥 ${res.studentsCount} students</div>
-                <div class="result-stat">📸 ${res.photoOk} photos</div>
-                ${hasErrors ? `<div class="result-stat">⚠️ ${res.photoErrors.length} missing</div>` : ''}
-                <div class="result-stat">📁 ${esc(res.photoFolderName)}</div>
-            </div>
-            <div class="result-buttons">
-                <a class="result-btn green" href="${esc(res.spreadsheetUrl)}" target="_blank">
-                    📊 Open Student List
-                </a>
-                <a class="result-btn blue" href="${esc(res.photoFolderUrl)}" target="_blank">
-                    📁 Open Photos in Drive
-                </a>
-            </div>
-            ${errorBlock}
-        </div>
-
-        <div class="dl-steps">
-            <h4>📥 Download & Combine</h4>
-            <ol class="dl-step-list">
-                <li>In the <strong>Student List</strong> sheet: click <strong>File → Download → Microsoft Excel (.xlsx)</strong> — save it to a local folder</li>
-                <li>In the <strong>Photos</strong> Drive folder: right-click → <strong>Download</strong> — Google zips it automatically. Unzip to get a <code>Photos</code> folder</li>
-                <li>Place the <code>Photos</code> folder in the <strong>same folder</strong> as the <code>.xlsx</code> file</li>
-                <li>Open the Excel file → click any cell in the <strong>Link_to_Cropped_Photo</strong> column → the photo opens locally 🎉</li>
-                <li>Optional: ZIP the whole folder and share it — links still work on any machine</li>
-            </ol>
-        </div>`;
+    document.getElementById('result').innerHTML =
+        '<div class="result-box ' + (hasErrs ? 'warn' : '') + '">' +
+            '<h3>' + (hasErrs ? '⚠️ Done — some photos missing' : '✅ Generation Complete!') + '</h3>' +
+            '<div class="result-stats">' +
+                '<div class="result-stat">👥 ' + res.studentsCount + ' students</div>' +
+                '<div class="result-stat">📸 ' + res.photoOk + ' photos</div>' +
+                (hasErrs ? '<div class="result-stat">⚠️ ' + errs.length + ' missing</div>' : '') +
+            '</div>' +
+            '<div class="result-btns">' +
+                '<a class="result-link green" href="' + esc(res.spreadsheetUrl) + '" target="_blank">📊 Open Student List</a>' +
+                '<a class="result-link blue"  href="' + esc(res.photoFolderUrl) + '" target="_blank">📁 Open Photos Folder</a>' +
+            '</div>' +
+            errBlock +
+        '</div>' +
+        '<div class="dl-card">' +
+            '<h4>📥 Download &amp; assemble</h4>' +
+            '<ol class="dl-list">' +
+                '<li><strong>Open Student List</strong> → File → Download → Microsoft Excel (.xlsx) → save to e.g. <code>StudentIDCards/</code></li>' +
+                '<li><strong>Open Photos Folder</strong> → right-click → Download → Google creates a ZIP → save and unzip</li>' +
+                '<li>Rename the unzipped folder to exactly <code>Photos</code> (Google adds a timestamp to the name)</li>' +
+                '<li>Place the <code>Photos</code> folder next to the <code>.xlsx</code> file in the same directory</li>' +
+                '<li>Open the Excel → click any cell in <strong>Link_to_Cropped_Photo</strong> → photo opens 🎉</li>' +
+                '<li>Optional: ZIP the entire folder to share — links work on any machine</li>' +
+            '</ol>' +
+            '<div class="callout" style="margin-top:6px;">⚠️ Rename the Photos folder to exactly <code>Photos</code> (capital P) before opening the Excel — otherwise the links will not resolve.</div>' +
+        '</div>';
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════════════════════
-async function callScript(payload) {
-    const base = WEB_APP_URL || document.getElementById('webAppUrl').value.trim();
-    if (!base) throw new Error('Apps Script URL not configured. Open ⚙️ Settings.');
+// ── Network ───────────────────────────────────────────────────────────────
+function callScript(payload) {
+    var base = WEB_APP_URL || document.getElementById('inWebApp').value.trim();
+    if (!base) return Promise.reject(new Error('Apps Script URL not configured — open ⚙️ Settings.'));
 
-    // Apps Script POST blocks cross-origin (CORS). GET works fine from any domain.
-    // Payload is small (URLs + validity map) so URL length is never an issue.
-    const url = base + '?payload=' + encodeURIComponent(JSON.stringify(payload));
+    var url = base + '?payload=' + encodeURIComponent(JSON.stringify(payload));
 
-    const response = await fetch(url, { method: 'GET', redirect: 'follow' });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status} — ${response.statusText}`);
-    const text = await response.text();
-    try   { return JSON.parse(text); }
-    catch { throw new Error('Unexpected response from Apps Script:\n' + text.substring(0, 400)); }
+    return fetch(url, { method: 'GET', redirect: 'follow' })
+        .catch(function(err) {
+            throw new Error(
+                'Cannot reach the Apps Script. Likely causes: ' +
+                '(1) wrong URL in Settings, ' +
+                '(2) not deployed as Web App with "Who has access: Anyone", ' +
+                '(3) need to re-deploy after updating the script. ' +
+                'Network detail: ' + err.message
+            );
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('HTTP ' + response.status + ' from Apps Script — try re-deploying as a new version.');
+            return response.text();
+        })
+        .then(function(text) {
+            try { return JSON.parse(text); }
+            catch(e) { throw new Error('Apps Script returned unexpected content (not JSON). Re-deploy using the latest StudentIDCards.gs. Preview: ' + text.substring(0, 200)); }
+        });
 }
 
-function setStatus(id, type, msg) {
-    const el = document.getElementById(id);
-    el.className = 'status ' + type;
-    el.textContent = msg;
+// ── Helpers ───────────────────────────────────────────────────────────────
+function showBar(id, type, msg) {
+    var el = document.getElementById(id);
+    el.className    = 'status-bar ' + type;
+    el.textContent  = msg;
 }
 
 function setProgress(pct, label) {
-    document.getElementById('progressFill').style.width  = pct + '%';
-    document.getElementById('progressLabel').textContent = label;
+    document.getElementById('progFill').style.width  = pct + '%';
+    document.getElementById('progLabel').textContent = label;
 }
 
-function markDone(id) {
-    document.getElementById(id).classList.remove('active', 'error');
-    document.getElementById(id).classList.add('complete');
+function openSettings() {
+    document.getElementById('settingsBody').classList.remove('hidden');
+    document.getElementById('sArrow').textContent = '▲';
 }
 
-function show(id, visible) {
-    const el = document.getElementById(id);
-    if (visible) { el.style.display = 'block'; el.classList.add('active'); }
-    else           el.style.display = 'none';
+function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function esc(str) {
-    retur
+</script>
+</body>
+</html>
