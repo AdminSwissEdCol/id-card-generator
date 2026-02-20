@@ -319,9 +319,10 @@
     </div>
     <div class="step-content">
         <p style="font-size:13px;color:#555;margin-bottom:10px;">
-            Paste the URL of your master student list (Sheet2). The script will read
-            <strong>Col A</strong> = Class, <strong>Col AG</strong> = Full Name,
-            <strong>Col AH</strong> = School Email, <strong>Col AI</strong> = Birthday.
+            Paste the URL of your master student list (Sheet2). Columns are auto-detected
+            by header name — the sheet needs headers:
+            <strong>Class</strong>, <strong>First Name Last Name</strong>,
+            <strong>School Email</strong>, <strong>Birthday</strong>.
         </p>
         <div class="input-group">
             <input type="url" id="sheet2Url"
@@ -336,7 +337,7 @@
             <div class="help-content">
                 <table class="help-table">
                     <tr><td>❌ "Cannot open"</td><td>Make sure the Google account running the Apps Script has access to this sheet</td></tr>
-                    <tr><td>❌ "Class column not found"</td><td>Sheet2 must have a header row. Col A header = <code>Class</code></td></tr>
+                    <tr><td>❌ "Class column not found"</td><td>Make sure row 1 has exactly these headers: <code>Class</code>, <code>First Name Last Name</code>, <code>School Email</code>, <code>Birthday</code></td></tr>
                     <tr><td>❌ "Apps Script URL not set"</td><td>Open ⚙️ Settings above and save your Web App URL first</td></tr>
                     <tr><td>❌ CORS / network error</td><td>Re-deploy the Apps Script as a new version and try again</td></tr>
                 </table>
@@ -421,8 +422,8 @@
         <pre style="background:#f1f3f4;padding:10px;border-radius:6px;font-size:12px;margin-top:6px;">StudentIDCards/
   ├── StudentIDCards.xlsx
   └── Photos/
-        ├── antony.aghilesh@student.swissedcol.ch.jpg
-        ├── rahul.agrawal@student.swissedcol.ch.jpg
+        ├── <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1d0dfc5dedfc89fd0d6d9d8ddd4c2d9f1c2c5c4d5d4dfc59fc2c6d8c2c2d4d5d2dedd9fd2d99fdbc1d6">[email&#160;protected]</a>
+        ├── <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="60120108150c4e0107120117010c2013141504050e144e13170913130504030f0c4e03084e0a1007">[email&#160;protected]</a>
         └── …</pre>
         <p style="margin-top:10px;font-size:12px;color:#888;">
             The HYPERLINK formula in Excel uses a relative path (<code>Photos/email.jpg</code>),
@@ -433,7 +434,7 @@
 
 <div class="footer">Swiss Educational College &nbsp;·&nbsp; Student ID Card Generator</div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════════════════════════════════════════════════════════════════
 // DEFAULTS — add new intake terms here
 // ═══════════════════════════════════════════════════════════════════════════
@@ -681,20 +682,19 @@ function renderResult(res) {
 // UTILS
 // ═══════════════════════════════════════════════════════════════════════════
 async function callScript(payload) {
-    const url = WEB_APP_URL || document.getElementById('webAppUrl').value.trim();
-    if (!url) throw new Error('Apps Script URL not configured. Open ⚙️ Settings.');
+    const base = WEB_APP_URL || document.getElementById('webAppUrl').value.trim();
+    if (!base) throw new Error('Apps Script URL not configured. Open ⚙️ Settings.');
 
-    const response = await fetch(url, {
-        method:   'POST',
-        headers:  { 'Content-Type': 'text/plain' },
-        body:     JSON.stringify(payload),
-        redirect: 'follow',
-    });
+    // Apps Script POST blocks cross-origin (CORS). GET works fine from any domain.
+    // Payload is small (URLs + validity map) so URL length is never an issue.
+    const url = base + '?payload=' + encodeURIComponent(JSON.stringify(payload));
+
+    const response = await fetch(url, { method: 'GET', redirect: 'follow' });
 
     if (!response.ok) throw new Error(`HTTP ${response.status} — ${response.statusText}`);
     const text = await response.text();
     try   { return JSON.parse(text); }
-    catch { throw new Error('Unexpected response from Apps Script:\n' + text.substring(0, 300)); }
+    catch { throw new Error('Unexpected response from Apps Script:\n' + text.substring(0, 400)); }
 }
 
 function setStatus(id, type, msg) {
@@ -720,13 +720,4 @@ function show(id, visible) {
 }
 
 function esc(str) {
-    return String(str || '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ─── Init ────────────────────────────────────────────────────────────────────
-loadSettings();
-</script>
-</body>
-</html>
+    retur
