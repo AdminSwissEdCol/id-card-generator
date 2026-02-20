@@ -13,7 +13,7 @@ https://docs.google.com/spreadsheets/d/1D1JFXA5g9uam97Jauk4-QBwMGxB2rvVSh65bkclU
 
 # scripts, triggers
 
-lms-morror-system
+lms-mirror-system
 
 https://github.com/AdminSwissEdCol/lms-mirror-system/blob/main/transcript-api/sync_student_pictures.py
 
