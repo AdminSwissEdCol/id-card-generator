@@ -277,7 +277,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
                 <p>Sheet1 is in the <strong>Metabase_Foto</strong> Google Drive folder. It maps each student's email to their photo file.</p>
                 <table class="htbl">
                     <tr><td>Col A</td><td>Student name — ignored</td></tr>
-                    <tr><td>Col B</td><td>School email e.g. <code>antony.aghilesh@student.swissedcol.ch</code></td></tr>
+                    <tr><td>Col B</td><td>School email e.g. <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c3ccd6cdccdb8cc3c5cacbcec7d1cae2d1d6d7c6c7ccd68cd1d5cbd1d1c7c6c1cdce8cc1ca">[email&#160;protected]</a></code></td></tr>
                     <tr><td>Col C</td><td>Google Drive photo URL — thumbnail format fine: <code>https://drive.google.com/thumbnail?id=…&sz=w200</code></td></tr>
                 </table>
             </div>
@@ -285,14 +285,21 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
 
         <div class="acc">
             <button class="acc-btn" onclick="toggleAcc(this)">
-                ❌ Settings forgotten / not saving <span>▼</span>
+                ❌ Settings forgotten / not saving — and cache clearing <span>▼</span>
             </button>
             <div class="acc-body">
+                <p><strong>If settings work in incognito but not in your regular browser:</strong></p>
+                <ul>
+                    <li>Your regular browser likely has a cached old version of the page. Hard-reload it: <strong>Ctrl+Shift+R</strong> (Windows/Linux) or <strong>Cmd+Shift+R</strong> (Mac)</li>
+                    <li>If that doesn't help: open DevTools (<kbd>F12</kbd>) → <strong>Application</strong> tab → <strong>Local Storage</strong> → delete the <code>idcard_webapp</code> and <code>idcard_sheet1</code> entries → refresh, then re-save settings</li>
+                    <li>Or: Chrome address bar → 🔒 lock icon → <strong>Site settings → Clear data</strong> → reload</li>
+                </ul>
+                <p style="margin-top:8px;"><strong>General settings rules:</strong></p>
                 <ul>
                     <li>Click <strong>💾 Save Settings</strong> — just typing is not enough</li>
                     <li>Settings persist in browser localStorage on the same device/browser</li>
-                    <li>Private/incognito windows don't persist — use a regular window</li>
-                    <li>Clearing browser data removes saved settings</li>
+                    <li>Private/incognito windows don't persist — use a regular window once settings are saved and working</li>
+                    <li>Clearing browser data (cookies/cache) removes saved settings</li>
                 </ul>
             </div>
         </div>
@@ -394,11 +401,18 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
     </div>
     <div id="step3locked" class="locked-msg">🔒 Complete Steps 1 &amp; 2 first</div>
     <div id="step3content" style="display:none;">
-        <p style="font-size:13px;color:#555;margin-bottom:6px;">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">
             The Apps Script will copy &amp; rename all photos, create the student list, and organise everything
-            into a new folder in your Google Drive:
-            <strong>My Drive → Metabase_Foto → IDMakerTool → ID_Files_[date]</strong>
+            into a new dated folder inside:
         </p>
+        <div style="background:#f1f3f4;border-radius:7px;padding:12px 16px;margin-bottom:14px;font-size:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <span style="font-family:monospace;color:#333;">My Drive → Metabase_Foto → <strong>IDMakerTool</strong> → ID_Files_[date]</span>
+            <a href="https://drive.google.com/drive/folders/1pNhZyZQRzgqFNYniaaZ47Vf1FYeZ_G5S?usp=drive_link"
+               target="_blank"
+               style="display:inline-block;background:#4285f4;color:white;padding:7px 16px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;white-space:nowrap;">
+                📁 Open IDMakerTool Folder ↗
+            </a>
+        </div>
         <p style="font-size:13px;color:#c5221f;margin-bottom:16px;">
             ⏱ Takes <strong>1–3 minutes</strong> for ~90 students. Do not close this tab.
         </p>
@@ -472,7 +486,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
               └── ID_Files_20260224_1430/   ← new folder each run
                     ├── ID_Cards_Output     ← Google Sheet → download as .xlsx
                     └── Photos/             ← already correctly named
-                          ├── antony.aghilesh@student.swissedcol.ch.jpg
+                          ├── <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9d8d7cdd6d7c097d8ded1d0d5dccad1f9cacdccdddcd7cd97caced0cacadcdddad6d597dad197d3c9de">[email&#160;protected]</a>
                           └── …</pre>
         <p style="margin-top:10px;"><strong>Valid class format:</strong> <code>YY-TX-Class-Level</code> — two digits, dash, T1–T4, dash, Class-, level name. Anything else (row numbers, status notes, internship dates) is silently ignored and never appears in Step 2.</p>
     </div>
@@ -480,7 +494,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
 
 <div class="footer">Swiss Educational College · Student ID Card Generator v6</div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var DEFAULT_VALIDITY = {
     '25-T3-': '07/2025-06/2026',
     '25-T4-': '10/2025-09/2026',
@@ -755,17 +769,4 @@ function callScript(payload) {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 function showBar(id, type, msg) {
-    var el = document.getElementById(id);
-    el.className  = 'sbar show ' + type;
-    el.textContent = msg;
-}
-function setProgress(pct, lbl) {
-    document.getElementById('progFill').style.width = pct + '%';
-    document.getElementById('progLbl').textContent  = lbl;
-}
-function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-</script>
-</body>
-</html>
+    var el = document.getElementById(
