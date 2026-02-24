@@ -241,7 +241,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
             <small>— Col A = Name, Col B = Email, Col C = Drive photo link</small>
         </label>
         <input class="url-input" type="url" id="inSheet1"
-               placeholder="https://docs.google.com/spreadsheets/d/"
+               placeholder="https://docs.google.com/spreadsheets/d/…"
                oninput="onSettingsChange()" />
 
         <div style="margin-top:14px; display:flex; align-items:center; gap:12px;">
@@ -277,7 +277,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
                 <p>Sheet1 is in the <strong>Metabase_Foto</strong> Google Drive folder. It maps each student's email to their photo file.</p>
                 <table class="htbl">
                     <tr><td>Col A</td><td>Student name — ignored</td></tr>
-                    <tr><td>Col B</td><td>School email e.g. <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c3ccd6cdccdb8cc3c5cacbcec7d1cae2d1d6d7c6c7ccd68cd1d5cbd1d1c7c6c1cdce8cc1ca">[email&#160;protected]</a></code></td></tr>
+                    <tr><td>Col B</td><td>School email e.g. <code>firstname.lastname [at] student.swissedcol.ch</code></td></tr>
                     <tr><td>Col C</td><td>Google Drive photo URL — thumbnail format fine: <code>https://drive.google.com/thumbnail?id=…&sz=w200</code></td></tr>
                 </table>
             </div>
@@ -486,7 +486,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
               └── ID_Files_20260224_1430/   ← new folder each run
                     ├── ID_Cards_Output     ← Google Sheet → download as .xlsx
                     └── Photos/             ← already correctly named
-                          ├── <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9d8d7cdd6d7c097d8ded1d0d5dccad1f9cacdccdddcd7cd97caced0cacadcdddad6d597dad197d3c9de">[email&#160;protected]</a>
+                          ├── firstname.lastname [at] student.swissedcol.ch.jpg
                           └── …</pre>
         <p style="margin-top:10px;"><strong>Valid class format:</strong> <code>YY-TX-Class-Level</code> — two digits, dash, T1–T4, dash, Class-, level name. Anything else (row numbers, status notes, internship dates) is silently ignored and never appears in Step 2.</p>
     </div>
@@ -494,7 +494,7 @@ pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; 
 
 <div class="footer">Swiss Educational College · Student ID Card Generator v6</div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 var DEFAULT_VALIDITY = {
     '25-T3-': '07/2025-06/2026',
     '25-T4-': '10/2025-09/2026',
@@ -769,4 +769,17 @@ function callScript(payload) {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 function showBar(id, type, msg) {
-    var el = document.getElementById(
+    var el = document.getElementById(id);
+    el.className   = 'sbar show ' + type;
+    el.textContent = msg;
+}
+function setProgress(pct, lbl) {
+    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('progLbl').textContent  = lbl;
+}
+function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
