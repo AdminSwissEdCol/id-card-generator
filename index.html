@@ -179,12 +179,12 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
         They will be remembered in your browser for future visits.
     </div>
 
-    <label class="field" for="inWebApp">Apps Script Web App URL (IDMakerTool)
-        <small>&mdash; the backend that reads your sheets and copies photos (Metabase_Foto)</small>
+    <label class="field" for="inWebApp">Apps Script Web App URL
+        <small>&mdash; the backend that reads your sheets and copies photos</small>
     </label>
     <input type="url" id="inWebApp" placeholder="https://script.google.com/macros/s/AKfycb/exec" oninput="onSettingsChange()" />
 
-    <label class="field" for="inSheet1">Student Pictures Directory URL (Sheet1)
+    <label class="field" for="inSheet1">Photo Index Sheet URL (Sheet1)
         <small>&mdash; Col B = Email, Col C = Drive photo link</small>
     </label>
     <input type="url" id="inSheet1" placeholder="https://docs.google.com/spreadsheets/d/..." oninput="onSettingsChange()" />
@@ -215,7 +215,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <!-- STEP 1 -->
 <div class="section" id="step1">
     <div class="step-label">Step 1 of 3</div>
-    <h2>Load Class List (Student List to Use)</h2>
+    <h2>Load Class List</h2>
     <div class="action-box">
         Paste your master student list URL and click <strong>Load Classes</strong>.
     </div>
@@ -279,7 +279,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     <div class="step-label">Step 3 of 3</div>
     <h2>Generate Files</h2>
     <div class="action-box">
-        Click <strong>Generate Now</strong>. Processing takes about 5 minutes (90 Students). Do not close this tab.
+        Click <strong>Generate Now</strong>. Processing takes about 45 seconds. Do not close this tab.
     </div>
 
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
@@ -297,15 +297,15 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     <div id="result"></div>
 
     <div class="help">
-        The script copies and renames photos, then creates
+        The script copies and renames photos in parallel, then creates
         <strong>My Drive &rarr; Metabase_Foto &rarr; IDMakerTool &rarr; ID_Files_[date]</strong>
         with the <code>Photos/</code> folder and <code>ID_Cards_Output</code> sheet inside.
         <button class="help-toggle" onclick="toggleHelpExtra(this)">Error messages and troubleshooting</button>
         <div class="help-extra">
-            <strong>Failed to fetch:</strong> re-deploy Apps Script as a New version using latest <code>StudentIDCards.gs</code> (v6).<br>
+            <strong>Failed to fetch / times out:</strong> re-deploy Apps Script as a New version using latest <code>StudentIDCards.gs</code> (v7). Make sure it is deployed with Execute as: Me and Who has access: Anyone.<br>
             <strong>0 students matched:</strong> no validity periods set in Step 2 &mdash; fill in at least one row.<br>
             <strong>Many missing photos:</strong> those students are in Sheet2 but not Sheet1 &mdash; add their email and Drive photo URL to Sheet1 and re-run.<br>
-            <strong>Times out at 6 min:</strong> blank half the validity periods to skip half the students, run, then restore and run again.
+            <strong>Some photos show HTTP 403:</strong> those photo files are not shared with the Apps Script owner &mdash; the owner needs Viewer access to the file or its parent folder in Drive.
         </div>
     </div>
 </div>
@@ -511,7 +511,7 @@ function generate() {
     document.getElementById('result').innerHTML = '';
     document.getElementById('progWrap').style.display = 'block';
     setProgress(8, 'Sending request to Apps Script...');
-    showBar('st3','info','Processing — do not close this tab. Takes about 5 minutes.');
+    showBar('st3','info','Processing — copying photos in parallel. Should finish in about 45 seconds.');
 
     callScript({ action: 'generate', sheet1Url: s1, sheet2Url: s2, validityMap: validityMap })
         .then(function(res) {
