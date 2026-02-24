@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student ID Card Generator — SEC</title>
+<title>Student ID Card Generator — Swiss Educational College</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -168,7 +168,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 
 <div class="header">
     <h1>Student ID Card Generator</h1>
-    <p>SEC &mdash; Generate student list and photos automatically</p>
+    <p>Swiss Educational College &mdash; Generate student list and photos automatically</p>
 </div>
 
 <!-- SETTINGS -->
@@ -278,34 +278,37 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <div class="section locked" id="step3">
     <div class="step-label">Step 3 of 3</div>
     <h2>Generate Files</h2>
-    <div class="action-box">
-        Click <strong>Generate Now</strong>. Processing takes about 45 seconds. Do not close this tab.
+    <div class="action-box" id="step3action">
+        Complete Steps 1 &amp; 2 first &mdash; generate buttons will appear here automatically.
     </div>
 
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
-        <button class="btn btn-green" id="btnGen" onclick="generate()">Generate Now</button>
+    <!-- Chunk buttons — rendered by JS after step 1 loads student count -->
+    <div id="chunkBtns" style="display:none;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+            <!-- buttons injected here -->
+        </div>
         <a href="https://drive.google.com/drive/folders/1pNhZyZQRzgqFNYniaaZ47Vf1FYeZ_G5S?usp=drive_link"
-           target="_blank" class="btn btn-link">Open IDMakerTool Folder</a>
+           target="_blank" class="btn btn-link" style="margin-top:4px;">Open IDMakerTool Folder</a>
     </div>
 
     <div id="progWrap" style="display:none;" class="prog-wrap">
         <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
-        <div class="prog-label" id="progLbl">Starting...</div>
+        <div class="prog-label" id="progLbl"></div>
     </div>
 
     <div class="status" id="st3"></div>
     <div id="result"></div>
 
     <div class="help">
-        The script copies and renames photos in parallel, then creates
-        <strong>My Drive &rarr; Metabase_Foto &rarr; IDMakerTool &rarr; ID_Files_[date]</strong>
-        with the <code>Photos/</code> folder and <code>ID_Cards_Output</code> sheet inside.
+        Each button processes up to 50 students (~2.5 min). All photos go into
+        the same <strong>ID_Files_[date]</strong> folder in Drive. The Excel sheet
+        is written automatically after the last chunk completes.
         <button class="help-toggle" onclick="toggleHelpExtra(this)">Error messages and troubleshooting</button>
         <div class="help-extra">
-            <strong>Failed to fetch / times out:</strong> re-deploy Apps Script as a New version using latest <code>StudentIDCards.gs</code> (v7). Make sure it is deployed with Execute as: Me and Who has access: Anyone.<br>
+            <strong>Failed to fetch:</strong> re-deploy Apps Script as a New version using latest <code>StudentIDCards.gs</code> (v8). Execute as: Me, Who has access: Anyone.<br>
             <strong>0 students matched:</strong> no validity periods set in Step 2 &mdash; fill in at least one row.<br>
             <strong>Many missing photos:</strong> those students are in Sheet2 but not Sheet1 &mdash; add their email and Drive photo URL to Sheet1 and re-run.<br>
-            <strong>Some photos show HTTP 403:</strong> those photo files are not shared with the Apps Script owner &mdash; the owner needs Viewer access to the file or its parent folder in Drive.
+            <strong>A chunk timed out:</strong> click that chunk button again to retry — already-completed chunks are not re-run (they have their own button).
         </div>
     </div>
 </div>
@@ -338,7 +341,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     </div>
 </div>
 
-<div class="footer">SEC &middot; Student ID Card Generator v6</div>
+<div class="footer">Swiss Educational College &middot; Student ID Card Generator v6</div>
 
 <script>
 var DEFAULT_VALIDITY = {
@@ -394,16 +397,33 @@ function toggleHelpExtra(btn) {
     btn.textContent = (open ? 'Hide' : 'Show') + btn.textContent.replace(/^(Hide|Show)\s*/,'');
 }
 
+// ── Step state ────────────────────────────────────────────────────────────
+var CHUNK_SIZE    = 50;
+var totalStudents = 0;  // set after step 1 loads
+
+// Persists across chunk calls within one session
+var genState = {
+    runFolderId:    null,
+    photosFolderId: null,
+    spreadsheetId:  null,
+    runFolderUrl:   null,
+    runFolderName:  null,
+    totalOk:        0,
+    allErrors:      [],
+    chunksTotal:    0,
+    chunksDone:     0
+};
+
 function unlockStep(id) {
     document.getElementById(id).classList.remove('locked');
 }
-
 function markDone(id) {
     var el = document.getElementById(id);
     el.classList.remove('locked');
     el.classList.add('done');
 }
 
+// ── Step 1: Load classes ──────────────────────────────────────────────────
 function loadClasses() {
     var s2 = document.getElementById('inSheet2').value.trim();
     var wa = document.getElementById('inWebApp').value.trim() || WEB_APP_URL;
@@ -413,10 +433,9 @@ function loadClasses() {
         return;
     }
     WEB_APP_URL = wa;
-
     if (!s2) { showBar('st1','error','Please paste the Sheet2 URL.'); return; }
     if (s2.indexOf('docs.google.com/spreadsheets') === -1) {
-        showBar('st1','error','That does not look like a Google Sheets URL. Copy it from the browser address bar while Sheet2 is open.'); return;
+        showBar('st1','error','That does not look like a Google Sheets URL.'); return;
     }
 
     showBar('st1','info','Connecting to Apps Script and reading Sheet2...');
@@ -426,11 +445,13 @@ function loadClasses() {
         .then(function(data) {
             if (!data.success) throw new Error(data.error || 'Unknown error');
             if (!data.classes.length) throw new Error('No valid class groups found. Check that the Class column in Sheet2 has values matching YY-TX-Class-Level format.');
+            totalStudents = data.totalStudents;
             buildClassTable(data.classes, data.totalStudents);
             showBar('st1','success','Loaded ' + data.totalStudents + ' students across ' + data.classes.length + ' class group(s).');
             markDone('step1');
             unlockStep('step2');
             unlockStep('step3');
+            buildChunkButtons(data.totalStudents);
             document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
         })
         .catch(function(e) {
@@ -439,14 +460,174 @@ function loadClasses() {
         .finally(function() { document.getElementById('btnLoad').disabled = false; });
 }
 
+// ── Step 3: Build chunk buttons ───────────────────────────────────────────
+function buildChunkButtons(total) {
+    var numChunks = Math.ceil(total / CHUNK_SIZE);
+    genState.chunksTotal = numChunks;
+    genState.chunksDone  = 0;
+
+    var wrap = document.getElementById('chunkBtns');
+    var btnRow = wrap.querySelector('div');
+    btnRow.innerHTML = '';
+
+    for (var i = 0; i < numChunks; i++) {
+        var start = i * CHUNK_SIZE + 1;
+        var end   = Math.min((i + 1) * CHUNK_SIZE, total);
+        var btn   = document.createElement('button');
+        btn.id        = 'chunk_btn_' + i;
+        btn.className = 'btn ' + (i === 0 ? 'btn-green' : 'btn-link');
+        btn.style.minWidth = '130px';
+        btn.textContent = (numChunks === 1)
+            ? 'Generate All (' + total + ')'
+            : 'Generate ' + start + '–' + end;
+        btn.disabled  = (i !== 0);  // only first enabled initially
+        btn.onclick   = (function(chunkIdx) { return function() { runChunk(chunkIdx); }; })(i);
+        btnRow.appendChild(btn);
+    }
+
+    // Update action box
+    document.getElementById('step3action').innerHTML =
+        numChunks === 1
+        ? 'Click <strong>Generate All</strong> to process all ' + total + ' students (~2.5 min). Do not close this tab.'
+        : 'Click each chunk button in order. Each chunk takes ~2.5 min. Do not close this tab between chunks.';
+
+    wrap.style.display = 'block';
+}
+
+// ── Run one chunk ─────────────────────────────────────────────────────────
+function runChunk(chunkIdx) {
+    var s1 = document.getElementById('inSheet1').value.trim() || SHEET1_URL;
+    var s2 = document.getElementById('inSheet2').value.trim();
+
+    if (!WEB_APP_URL) { showBar('st3','error','Apps Script URL not set — fill in Settings.'); return; }
+    if (!s1)          { showBar('st3','error','Photo Index URL not set — fill in Settings.'); return; }
+    if (!s2)          { showBar('st3','error','Sheet2 URL missing — complete Step 1.'); return; }
+
+    var validityMap = {};
+    document.querySelectorAll('.val-inp').forEach(function(inp) {
+        var p = inp.getAttribute('data-prefix'), v = inp.value.trim();
+        if (p && v) validityMap[p] = v;
+    });
+    if (!Object.keys(validityMap).length) {
+        showBar('st3','error','No validity periods configured — fill in at least one row in Step 2.'); return;
+    }
+
+    // Disable all chunk buttons while running
+    for (var i = 0; i < genState.chunksTotal; i++) {
+        var b = document.getElementById('chunk_btn_' + i);
+        if (b) b.disabled = true;
+    }
+
+    var chunkStart = chunkIdx * CHUNK_SIZE;
+    var label = genState.chunksTotal === 1
+        ? 'Processing all students...'
+        : 'Processing chunk ' + (chunkIdx + 1) + ' of ' + genState.chunksTotal + '...';
+
+    document.getElementById('progWrap').style.display = 'block';
+    setProgress(10 + (chunkIdx / genState.chunksTotal) * 80, label);
+    showBar('st3','info', label + ' Do not close this tab.');
+
+    var payload = {
+        action:         'generate',
+        sheet1Url:      s1,
+        sheet2Url:      s2,
+        validityMap:    validityMap,
+        chunkStart:     chunkStart,
+        chunkSize:      CHUNK_SIZE,
+        runFolderId:    genState.runFolderId,
+        photosFolderId: genState.photosFolderId,
+        spreadsheetId:  genState.spreadsheetId
+    };
+
+    callScript(payload)
+        .then(function(res) {
+            if (!res.success) throw new Error(res.error || 'Chunk failed');
+
+            // Accumulate state
+            genState.runFolderId    = res.runFolderId;
+            genState.photosFolderId = res.photosFolderId;
+            genState.spreadsheetId  = res.spreadsheetId;
+            genState.runFolderUrl   = res.runFolderUrl;
+            genState.runFolderName  = res.runFolderName;
+            genState.totalOk       += res.photoOk;
+            genState.allErrors      = genState.allErrors.concat(res.photoErrors || []);
+            genState.chunksDone++;
+
+            // Mark chunk button done
+            var doneBtn = document.getElementById('chunk_btn_' + chunkIdx);
+            if (doneBtn) {
+                doneBtn.textContent = '✓ ' + doneBtn.textContent.replace(/^✓\s*/,'');
+                doneBtn.className = 'btn btn-link';
+                doneBtn.style.opacity = '0.6';
+                doneBtn.disabled = true;
+            }
+
+            if (res.isLast) {
+                // All done
+                setProgress(100, 'Complete!');
+                showBar('st3','success',
+                    res.totalStudents + ' students — ' + genState.totalOk + ' photos copied' +
+                    (genState.allErrors.length ? ', ' + genState.allErrors.length + ' missing.' : '.'));
+                renderResult(res.spreadsheetUrl);
+                markDone('step3');
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // Enable next chunk button
+                var nextBtn = document.getElementById('chunk_btn_' + (chunkIdx + 1));
+                if (nextBtn) {
+                    nextBtn.disabled  = false;
+                    nextBtn.className = 'btn btn-green';
+                }
+                var pct = (genState.chunksDone / genState.chunksTotal) * 100;
+                setProgress(pct, 'Chunk ' + genState.chunksDone + ' of ' + genState.chunksTotal + ' done — click next chunk to continue.');
+                showBar('st3','success',
+                    'Chunk ' + genState.chunksDone + '/' + genState.chunksTotal + ' done — ' +
+                    genState.totalOk + ' photos so far. Click the next button to continue.');
+            }
+        })
+        .catch(function(e) {
+            // Re-enable the failed chunk button so user can retry
+            var failBtn = document.getElementById('chunk_btn_' + chunkIdx);
+            if (failBtn) { failBtn.disabled = false; failBtn.className = 'btn btn-green'; }
+            showBar('st3','error', 'Chunk ' + (chunkIdx + 1) + ' failed: ' + e.message + ' — you can click the button again to retry.');
+        });
+}
+
+function renderResult(spreadsheetUrl) {
+    var errs = genState.allErrors;
+    var errBlock = errs.length
+        ? '<div class="err-log"><strong>Missing photos (' + errs.length + ') — add to Sheet1 and re-run:</strong><br>' +
+          errs.map(function(e){ return '&bull; ' + esc(e); }).join('<br>') + '</div>'
+        : '';
+
+    document.getElementById('result').innerHTML =
+        '<div class="folder-card">' +
+            '<h4>Files ready in Google Drive</h4>' +
+            '<div class="folder-tree">' +
+                '📁 <a href="' + esc(genState.runFolderUrl) + '" target="_blank"><strong>' + esc(genState.runFolderName) + '</strong></a><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;📊 <a href="' + esc(spreadsheetUrl) + '" target="_blank">ID_Cards_Output</a>' +
+                ' <span style="color:#888;font-size:11px;">← File &rarr; Download &rarr; Excel (.xlsx)</span><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;📁 Photos/' +
+                ' <span style="color:#888;font-size:11px;">← ' + genState.totalOk + ' photos, already named correctly</span>' +
+            '</div>' +
+            errBlock +
+            '<strong style="font-size:13px;">Download steps:</strong>' +
+            '<ol class="dl-list" style="margin-top:10px;">' +
+                '<li>Click <a href="' + esc(genState.runFolderUrl) + '" target="_blank"><strong>Open Drive folder</strong></a></li>' +
+                '<li>Open <strong>ID_Cards_Output</strong> &rarr; File &rarr; Download &rarr; Excel (.xlsx) &rarr; save locally</li>' +
+                '<li>Right-click <strong>Photos/</strong> &rarr; Download &rarr; unzip (folder already named <code>Photos</code>)</li>' +
+                '<li>Place <code>Photos/</code> next to the <code>.xlsx</code> file</li>' +
+                '<li>Open Excel &rarr; click any cell in <strong>Link_to_Cropped_Photo</strong> &rarr; photo opens locally</li>' +
+            '</ol>' +
+        '</div>';
+}
+
 function buildClassTable(classes, total) {
     document.getElementById('step2action').textContent = 'Review and confirm the validity period for each class group. Leave blank to skip a group.';
     document.getElementById('step2content').style.display = 'block';
-
     var tbody = document.getElementById('classBody');
     tbody.innerHTML = '';
     var inc = 0, skip = 0;
-
     classes.forEach(function(c) {
         var def = guessValidity(c.prefix);
         if (def) inc += c.count; else skip += c.count;
@@ -464,10 +645,8 @@ function buildClassTable(classes, total) {
             '<td style="font-size:16px;">' + (def ? '✅' : '⚠️') + '</td>';
         tbody.appendChild(tr);
     });
-
-    if (skip > 0) showBar('st2','warning', skip + ' student(s) in unrecognised class groups — add a validity period to include them.');
+    if (skip > 0) showBar('st2','warning', skip + ' student(s) in unrecognised class groups.');
     else          showBar('st2','success', 'All ' + total + ' students have a validity period assigned.');
-
     document.getElementById('classChips').innerHTML =
         '<div class="chip">Total: ' + total + '</div>' +
         '<div class="chip" style="background:#e6f4ea;color:#137333;">Included: ' + inc + '</div>' +
@@ -488,77 +667,6 @@ function guessValidity(prefix) {
             return DEFAULT_VALIDITY[k];
     }
     return '';
-}
-
-function generate() {
-    var s1 = document.getElementById('inSheet1').value.trim() || SHEET1_URL;
-    var s2 = document.getElementById('inSheet2').value.trim();
-
-    if (!WEB_APP_URL) { showBar('st3','error','Apps Script URL not set. Fill in the Settings section above.'); return; }
-    if (!s1)          { showBar('st3','error','Photo Index URL not set. Fill in the Settings section above.'); return; }
-    if (!s2)          { showBar('st3','error','Sheet2 URL missing. Complete Step 1 first.'); return; }
-
-    var validityMap = {};
-    document.querySelectorAll('.val-inp').forEach(function(inp) {
-        var p = inp.getAttribute('data-prefix'), v = inp.value.trim();
-        if (p && v) validityMap[p] = v;
-    });
-    if (!Object.keys(validityMap).length) {
-        showBar('st3','error','No validity periods configured. Fill in at least one row in Step 2.'); return;
-    }
-
-    document.getElementById('btnGen').disabled = true;
-    document.getElementById('result').innerHTML = '';
-    document.getElementById('progWrap').style.display = 'block';
-    setProgress(8, 'Sending request to Apps Script...');
-    showBar('st3','info','Processing — copying photos in parallel. Should finish in about 45 seconds.');
-
-    callScript({ action: 'generate', sheet1Url: s1, sheet2Url: s2, validityMap: validityMap })
-        .then(function(res) {
-            setProgress(100, 'Complete!');
-            if (!res.success) throw new Error(res.error || 'Generation failed');
-            showBar('st3','success',
-                res.studentsCount + ' students processed — ' + res.photoOk + ' photos copied' +
-                (res.photoErrors && res.photoErrors.length ? ', ' + res.photoErrors.length + ' missing.' : '.'));
-            renderResult(res);
-            markDone('step3');
-            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
-        })
-        .catch(function(e) {
-            document.getElementById('progWrap').style.display = 'none';
-            setProgress(0, '');
-            showBar('st3','error', e.message + ' — expand Troubleshooting in the help box below.');
-        })
-        .finally(function() { document.getElementById('btnGen').disabled = false; });
-}
-
-function renderResult(res) {
-    var errs = res.photoErrors || [];
-    var errBlock = errs.length
-        ? '<div class="err-log"><strong>Missing photos (' + errs.length + ') — add to Sheet1 and re-run:</strong><br>' +
-          errs.map(function(e){ return '&bull; ' + esc(e); }).join('<br>') + '</div>'
-        : '';
-
-    document.getElementById('result').innerHTML =
-        '<div class="folder-card">' +
-            '<h4>Files ready in Google Drive</h4>' +
-            '<div class="folder-tree">' +
-                '📁 <a href="' + esc(res.runFolderUrl) + '" target="_blank"><strong>' + esc(res.runFolderName) + '</strong></a><br>' +
-                '&nbsp;&nbsp;&nbsp;&nbsp;📊 <a href="' + esc(res.spreadsheetUrl) + '" target="_blank">ID_Cards_Output</a>' +
-                ' <span style="color:#888;font-size:11px;">← File → Download → Excel (.xlsx)</span><br>' +
-                '&nbsp;&nbsp;&nbsp;&nbsp;📁 Photos/' +
-                ' <span style="color:#888;font-size:11px;">← ' + res.photoOk + ' photos, already named correctly</span>' +
-            '</div>' +
-            errBlock +
-            '<strong style="font-size:13px;">Download steps:</strong>' +
-            '<ol class="dl-list" style="margin-top:10px;">' +
-                '<li>Click <a href="' + esc(res.runFolderUrl) + '" target="_blank"><strong>Open Drive folder</strong></a> to see both files</li>' +
-                '<li>Open <strong>ID_Cards_Output</strong> &rarr; File &rarr; Download &rarr; Excel (.xlsx) &rarr; save to e.g. <code>StudentIDCards/</code></li>' +
-                '<li>Right-click <strong>Photos/</strong> &rarr; Download &rarr; unzip (folder already named <code>Photos</code>)</li>' +
-                '<li>Place <code>Photos/</code> next to the <code>.xlsx</code> file in the same directory</li>' +
-                '<li>Open Excel &rarr; click any cell in <strong>Link_to_Cropped_Photo</strong> &rarr; photo opens locally</li>' +
-            '</ol>' +
-        '</div>';
 }
 
 function callScript(payload) {
