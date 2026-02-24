@@ -279,7 +279,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     <div class="step-label">Step 3 of 3</div>
     <h2>Generate Files</h2>
     <div class="action-box">
-        Click <strong>Generate Now</strong>. Processing takes about 2 minutes. Do not close this tab.
+        Click <strong>Generate Now</strong>. Processing takes about 5 minutes (90 Students). Do not close this tab.
     </div>
 
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
@@ -511,7 +511,7 @@ function generate() {
     document.getElementById('result').innerHTML = '';
     document.getElementById('progWrap').style.display = 'block';
     setProgress(8, 'Sending request to Apps Script...');
-    showBar('st3','info','Processing — do not close this tab. Takes about 2 minutes.');
+    showBar('st3','info','Processing — do not close this tab. Takes about 5 minutes.');
 
     callScript({ action: 'generate', sheet1Url: s1, sheet2Url: s2, validityMap: validityMap })
         .then(function(res) {
