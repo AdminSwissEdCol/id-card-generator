@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student ID Card Generator — Swiss Educational College</title>
+<title>Student ID Card Generator — SEC</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -168,7 +168,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 
 <div class="header">
     <h1>Student ID Card Generator</h1>
-    <p>Swiss Educational College &mdash; Generate student list and photos automatically</p>
+    <p>SEC &mdash; Generate student list and photos automatically</p>
 </div>
 
 <!-- SETTINGS -->
@@ -179,12 +179,12 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
         They will be remembered in your browser for future visits.
     </div>
 
-    <label class="field" for="inWebApp">Apps Script Web App URL
+    <label class="field" for="inWebApp">Apps Script Web App URL (IDMakerTool)
         <small>&mdash; the backend that reads your sheets and copies photos</small>
     </label>
     <input type="url" id="inWebApp" placeholder="https://script.google.com/macros/s/AKfycb/exec" oninput="onSettingsChange()" />
 
-    <label class="field" for="inSheet1">Photo Index Sheet URL (Sheet1)
+    <label class="field" for="inSheet1">Student Pictures Directory URL (Sheet1)
         <small>&mdash; Col B = Email, Col C = Drive photo link</small>
     </label>
     <input type="url" id="inSheet1" placeholder="https://docs.google.com/spreadsheets/d/..." oninput="onSettingsChange()" />
@@ -196,7 +196,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     </div>
 
     <div class="help">
-        <strong>How to get the Apps Script URL:</strong> open any Google Sheet &rarr; Extensions &rarr; Apps Script &rarr;
+        <strong>How to get the Apps Script URL:</strong> open any Google Sheet (IDMakerTool) &rarr; Extensions &rarr; Apps Script &rarr;
         paste <code>StudentIDCards.gs</code> &rarr; Save &rarr; Deploy &rarr; New deployment &rarr; Web app &rarr;
         Execute as: Me, Who has access: Anyone &rarr; Deploy &rarr; copy URL &rarr; paste above.<br><br>
         After any script change always re-deploy as a <strong>New version</strong> or the old code keeps running.<br><br>
@@ -215,7 +215,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <!-- STEP 1 -->
 <div class="section" id="step1">
     <div class="step-label">Step 1 of 3</div>
-    <h2>Load Class List</h2>
+    <h2>Load Student Data (Class List)</h2>
     <div class="action-box">
         Paste your master student list URL and click <strong>Load Classes</strong>.
     </div>
@@ -317,7 +317,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <div class="section">
     <h2>How It Works</h2>
     <div class="help" style="margin-top:0;">
-        <strong>Sheet1</strong> (Photo Index) &mdash; maps each student email to their Drive photo. Col B = email, Col C = thumbnail URL.<br>
+        <strong>Sheet1</strong> (Student Pictures Directory) &mdash; maps each student email to their Drive photo. Col B = email, Col C = thumbnail URL.<br>
         <strong>Sheet2</strong> (Class List) &mdash; master student list. Only <code>YY-TX-Class-*</code> rows are processed.<br>
         <strong>Apps Script</strong> &mdash; Google-hosted backend. No local installation needed.<br><br>
 
@@ -341,7 +341,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     </div>
 </div>
 
-<div class="footer">Swiss Educational College &middot; Student ID Card Generator v6</div>
+<div class="footer">SEC &middot; Student ID Card Generator v6</div>
 
 <script>
 var DEFAULT_VALIDITY = {
