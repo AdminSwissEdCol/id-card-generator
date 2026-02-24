@@ -11,8 +11,6 @@ body {
     max-width: 900px; margin: 0 auto; padding: 20px;
     background: #f0f2f5; line-height: 1.6; color: #333;
 }
-
-/* ── Header ── */
 .header {
     text-align: center; margin-bottom: 24px;
     padding-bottom: 20px; border-bottom: 3px solid #c8102e;
@@ -20,21 +18,19 @@ body {
 .header h1 { color: #c8102e; font-size: 1.8em; margin-bottom: 4px; }
 .header p  { color: #666; font-size: 1em; }
 
-/* ── Settings panel ── */
+/* ── Settings ── */
 .settings-panel {
     border-radius: 10px; margin-bottom: 18px; overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border: 2px solid #ffc107; background: #fffde7;
 }
 .settings-panel.ok { border-color: #34a853; background: white; }
-
 .settings-toggle {
     width: 100%; display: flex; align-items: center; justify-content: space-between;
     padding: 14px 18px; background: transparent; border: none;
     cursor: pointer; font-size: 14px; font-weight: 600; color: #333; text-align: left;
 }
 .settings-toggle:hover { background: rgba(0,0,0,0.03); }
-
 .s-badge {
     display: inline-block; font-size: 11px; font-weight: 600;
     padding: 2px 9px; border-radius: 10px; margin-left: 8px;
@@ -42,20 +38,13 @@ body {
 .s-badge.warn { background: #fce8e6; color: #c5221f; }
 .s-badge.good { background: #e6f4ea; color: #137333; }
 .s-arrow { font-size: 12px; color: #888; }
-
 .settings-body { padding: 0 18px 18px; }
 .settings-body.hidden { display: none; }
-
-/* ── Field labels & inputs ── */
-.field-label {
-    display: block; font-size: 13px; font-weight: 600;
-    margin: 14px 0 5px; color: #333;
-}
+.field-label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 5px; color: #333; }
 .field-label small { font-weight: 400; color: #888; }
 .url-input {
-    width: 100%; padding: 10px 13px;
-    border: 2px solid #ddd; border-radius: 6px;
-    font-size: 13px; font-family: monospace;
+    width: 100%; padding: 10px 13px; border: 2px solid #ddd;
+    border-radius: 6px; font-size: 13px; font-family: monospace;
 }
 .url-input:focus { outline: none; border-color: #4285f4; }
 .url-input.set { border-color: #34a853; background: #f8fff9; }
@@ -66,11 +55,10 @@ body {
     margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     border-left: 5px solid #ddd;
 }
-.step.active   { border-left-color: #4285f4; }
-.step.done     { border-left-color: #34a853; background: #f9fff9; }
-.step.locked   { border-left-color: #ddd; background: #fafafa; }
-.step.errored  { border-left-color: #ea4335; }
-
+.step.active  { border-left-color: #4285f4; }
+.step.done    { border-left-color: #34a853; background: #f9fff9; }
+.step.locked  { border-left-color: #ddd; background: #fafafa; }
+.step.errored { border-left-color: #ea4335; }
 .step-hdr { display: flex; align-items: center; margin-bottom: 14px; }
 .step-num {
     min-width: 34px; height: 34px; border-radius: 50%;
@@ -84,46 +72,35 @@ body {
 .step.done   .step-num .num   { display: none; }
 .step-title { font-size: 1.05em; font-weight: 600; }
 .step-sub   { font-size: 12px; color: #999; margin-left: 5px; }
-
-/* Locked overlay message */
-.locked-msg {
-    text-align: center; padding: 20px; color: #aaa; font-size: 14px;
-}
+.locked-msg { text-align: center; padding: 20px; color: #aaa; font-size: 14px; }
 
 /* ── Buttons ── */
 .btn {
-    display: inline-block; padding: 10px 20px;
-    border-radius: 6px; border: none; cursor: pointer;
-    font-size: 14px; font-weight: 600; margin: 4px 4px 4px 0;
+    display: inline-block; padding: 10px 20px; border-radius: 6px; border: none;
+    cursor: pointer; font-size: 14px; font-weight: 600; margin: 4px 4px 4px 0;
     text-decoration: none; transition: filter 0.15s;
 }
-.btn:hover:not(:disabled) { filter: brightness(0.92); }
+.btn:hover:not(:disabled) { filter: brightness(0.9); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-blue   { background: #4285f4; color: white; }
 .btn-green  { background: #34a853; color: white; }
 .btn-yellow { background: #fbbc04; color: #333; }
 .btn-lg     { font-size: 16px; padding: 14px 36px; }
-
-/* ── Input rows ── */
-.input-row { display: flex; gap: 10px; margin: 8px 0; }
+.input-row  { display: flex; gap: 10px; margin: 8px 0; }
 .input-row input {
-    flex: 1; padding: 10px 13px;
-    border: 2px solid #ddd; border-radius: 6px; font-size: 14px;
+    flex: 1; padding: 10px 13px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;
 }
 .input-row input:focus { outline: none; border-color: #4285f4; }
 
 /* ── Status bars ── */
-.status-bar {
-    margin: 10px 0; padding: 10px 14px;
-    border-radius: 6px; font-size: 13px;
-}
-.status-bar.hidden  { display: none; }
-.status-bar.info    { background: #e8f0fe; color: #1967d2; }
-.status-bar.success { background: #e6f4ea; color: #137333; }
-.status-bar.error   { background: #fce8e6; color: #c5221f; }
-.status-bar.warning { background: #fef7e0; color: #b06000; }
+.sbar { margin: 10px 0; padding: 10px 14px; border-radius: 6px; font-size: 13px; display: none; }
+.sbar.show    { display: block; }
+.sbar.info    { background: #e8f0fe; color: #1967d2; }
+.sbar.success { background: #e6f4ea; color: #137333; }
+.sbar.error   { background: #fce8e6; color: #c5221f; }
+.sbar.warning { background: #fef7e0; color: #b06000; }
 
-/* ── Callout boxes ── */
+/* ── Callouts ── */
 .callout {
     border-left: 4px solid #ffc107; background: #fff8e1;
     padding: 10px 14px; border-radius: 0 6px 6px 0;
@@ -143,8 +120,7 @@ body {
 .vtable tr:last-child td { border-bottom: none; }
 .cbadge {
     display: inline-block; background: #e8f0fe; color: #1967d2;
-    padding: 2px 10px; border-radius: 12px; font-size: 12px;
-    font-weight: 500; font-family: monospace;
+    padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; font-family: monospace;
 }
 .val-inp {
     padding: 7px 9px; border: 1.5px solid #ddd; border-radius: 5px;
@@ -155,44 +131,43 @@ body {
 .val-inp.skip { border-color: #ea4335; color: #bbb; }
 
 /* ── Progress ── */
-.prog-wrap { margin: 10px 0; }
-.prog-bar  { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
-.prog-fill {
-    height: 100%; border-radius: 4px;
-    background: linear-gradient(90deg, #4285f4, #34a853);
-    width: 0%; transition: width 0.5s ease;
-}
-.prog-label { font-size: 12px; color: #666; margin-top: 4px; }
+.prog-bar  { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin: 10px 0 4px; }
+.prog-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #4285f4, #34a853); width: 0%; transition: width 0.5s ease; }
+.prog-lbl  { font-size: 12px; color: #666; }
 
 /* ── Result box ── */
 .result-box {
-    border-radius: 10px; padding: 22px; color: white;
-    text-align: center; margin-top: 12px;
+    border-radius: 10px; padding: 22px; color: white; text-align: center; margin-top: 12px;
     background: linear-gradient(135deg, #34a853, #1a7a37);
 }
 .result-box.warn { background: linear-gradient(135deg, #f9a825, #e65100); }
 .result-box h3   { font-size: 1.3em; margin-bottom: 8px; }
 .result-stats    { display: flex; justify-content: center; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
 .result-stat     { background: rgba(255,255,255,0.22); padding: 6px 14px; border-radius: 20px; font-size: 13px; }
-.result-btns     { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 14px 0 6px; }
-.result-link {
-    background: white; padding: 11px 18px; border-radius: 7px;
-    text-decoration: none; font-weight: 600; font-size: 14px; transition: transform 0.15s;
-}
-.result-link:hover { transform: scale(1.04); }
-.result-link.green { color: #137333; }
-.result-link.blue  { color: #1967d2; }
 .err-log {
-    max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.18);
+    max-height: 130px; overflow-y: auto; background: rgba(0,0,0,0.18);
     border-radius: 5px; padding: 9px; margin-top: 9px; text-align: left; font-size: 12px;
 }
 
-/* ── Download card ── */
-.dl-card {
-    background: white; border-radius: 9px; padding: 18px;
-    margin-top: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+/* ── Drive folder card ── */
+.folder-card {
+    background: white; border-radius: 10px; padding: 22px;
+    margin-top: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #34a853;
 }
-.dl-card h4 { font-size: 14px; margin-bottom: 12px; color: #333; }
+.folder-card h4 { font-size: 15px; color: #137333; margin-bottom: 4px; }
+.folder-card .folder-path {
+    font-family: monospace; font-size: 12px; color: #666;
+    background: #f1f3f4; padding: 5px 10px; border-radius: 5px;
+    display: inline-block; margin-bottom: 14px;
+}
+.folder-tree {
+    background: #f8f9fa; border-radius: 7px; padding: 14px;
+    font-family: monospace; font-size: 13px; line-height: 2;
+    margin-bottom: 14px; color: #333;
+}
+.folder-tree a { color: #1967d2; text-decoration: none; }
+.folder-tree a:hover { text-decoration: underline; }
 .dl-list { list-style: none; padding: 0; counter-reset: dl; }
 .dl-list li {
     counter-increment: dl; display: flex; gap: 11px;
@@ -216,51 +191,38 @@ body {
 .acc-btn:hover { background: #f1f3f4; }
 .acc-body { display: none; padding: 14px; background: #fafafa; font-size: 13px; color: #555; line-height: 1.6; }
 .acc-body.open { display: block; }
+.acc-body p { margin-bottom: 8px; }
+.acc-body ul, .acc-body ol { padding-left: 18px; margin: 6px 0; }
+.acc-body li { margin: 5px 0; }
 
-/* ── Help tables ── */
+/* ── Tables ── */
 .htbl { width: 100%; border-collapse: collapse; margin: 8px 0; }
-.htbl td { padding: 7px 9px; border-bottom: 1px solid #eee; font-size: 12px; vertical-align: top; }
-.htbl td:first-child { width: 185px; font-weight: 600; color: #333; white-space: nowrap; }
+.htbl td { padding: 8px 10px; border-bottom: 1px solid #eee; font-size: 12px; vertical-align: top; }
+.htbl td:first-child { width: 190px; font-weight: 600; color: #333; white-space: nowrap; }
 .htbl tr:last-child td { border-bottom: none; }
-
-code {
-    background: #e8e8e8; padding: 1px 5px;
-    border-radius: 3px; font-family: monospace; font-size: 12px;
-}
-pre {
-    background: #f1f3f4; padding: 11px; border-radius: 6px;
-    font-size: 12px; overflow-x: auto; line-height: 1.7; margin: 8px 0;
-}
+code { background: #e8e8e8; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; }
+pre  { background: #f1f3f4; padding: 11px; border-radius: 6px; font-size: 12px; overflow-x: auto; line-height: 1.8; margin: 8px 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-.chip { background: #f1f3f4; padding: 3px 11px; border-radius: 12px; font-size: 12px; }
+.chip     { background: #f1f3f4; padding: 3px 11px; border-radius: 12px; font-size: 12px; }
 .chip.red { background: #fce8e6; color: #c5221f; }
+.footer   { text-align: center; padding: 22px; color: #bbb; font-size: 12px; }
 
-.footer { text-align: center; padding: 22px; color: #bbb; font-size: 12px; }
-
-@media (max-width: 580px) {
-    .input-row { flex-direction: column; }
-    .result-btns { flex-direction: column; }
-}
+@media (max-width: 580px) { .input-row { flex-direction: column; } }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
     <h1>🪪 Student ID Card Generator</h1>
-    <p>Swiss Educational College — generate student list + photo ZIP automatically</p>
+    <p>Swiss Educational College — generate student list + photos automatically</p>
 </div>
 
-<!-- ═══════════════════ SETTINGS ══════════════════════════════════════════ -->
+<!-- ═══════════════ SETTINGS ═════════════════════════════════════════════ -->
 <div class="settings-panel" id="settingsPanel">
     <button class="settings-toggle" onclick="toggleSettings()">
-        <span>
-            ⚙️ Settings
-            <span class="s-badge warn" id="sBadge">⚠ Setup required — click to open</span>
-        </span>
+        <span>⚙️ Settings <span class="s-badge warn" id="sBadge">⚠ Setup required — click to open</span></span>
         <span class="s-arrow" id="sArrow">▲</span>
     </button>
-
     <div class="settings-body" id="settingsBody">
         <div class="callout blue">
             <strong>One-time setup.</strong> Enter both URLs and click Save — they are remembered in your browser for future visits.
@@ -268,15 +230,15 @@ pre {
 
         <label class="field-label" for="inWebApp">
             🔗 Apps Script Web App URL
-            <small>— the backend that reads your sheets and copies photos</small>
+            <small>— backend that reads your sheets and copies photos</small>
         </label>
         <input class="url-input" type="url" id="inWebApp"
                placeholder="https://script.google.com/macros/s/AKfycb…/exec"
                oninput="onSettingsChange()" />
 
         <label class="field-label" for="inSheet1">
-            📋 Photo Index Sheet URL (Sheet1), import from Student Pictures Directory
-            <small>— Col A = Name, Col B = Email, Col C = Drive photo link, https://docs.google.com/spreadsheets/d/1D1JFXA5g9uam97Jauk4-QBwMGxB2rvVSh65bkclUvxE/edit?gid=0#gid=0</small>
+            📋 Photo Index Sheet URL (Sheet1)
+            <small>— Col A = Name, Col B = Email, Col C = Drive photo link</small>
         </label>
         <input class="url-input" type="url" id="inSheet1"
                placeholder="https://docs.google.com/spreadsheets/d/…"
@@ -287,27 +249,22 @@ pre {
             <span id="savedOk" style="color:#137333; font-size:13px; display:none;">✓ Saved!</span>
         </div>
 
-        <!-- Settings accordion help -->
         <div class="acc" style="margin-top:16px;">
             <button class="acc-btn" onclick="toggleAcc(this)">
                 📋 How to create the Apps Script and get the Web App URL <span>▼</span>
             </button>
             <div class="acc-body">
-                <p style="margin-bottom:8px;">The Apps Script is a Google-hosted backend. You set it up once:</p>
-                <ol style="padding-left:18px; line-height:2.1;">
+                <ol>
                     <li>Open any Google Spreadsheet → <strong>Extensions → Apps Script</strong></li>
-                    <li>Delete any placeholder code</li>
-                    <li>Paste the full contents of <code>StudentIDCards.gs</code> → Save (<kbd>Ctrl+S</kbd>)</li>
+                    <li>Delete any placeholder code → paste the full contents of <code>StudentIDCards.gs</code> → Save (<kbd>Ctrl+S</kbd>)</li>
                     <li>Click <strong>Deploy → New deployment</strong></li>
-                    <li>Click the ⚙️ gear icon → select <strong>Web app</strong></li>
-                    <li>Set <em>Execute as</em>: <strong>Me</strong></li>
-                    <li>Set <em>Who has access</em>: <strong>Anyone</strong></li>
-                    <li>Click <strong>Deploy</strong> → grant permissions when prompted</li>
-                    <li>Copy the <strong>Web app URL</strong> (starts with <code>https://script.google.com/macros/s/</code>)</li>
-                    <li>Paste it in the Apps Script URL field above → click <strong>💾 Save Settings</strong></li>
+                    <li>Click ⚙️ gear → <strong>Web app</strong></li>
+                    <li>Execute as: <strong>Me</strong> | Who has access: <strong>Anyone</strong></li>
+                    <li>Click <strong>Deploy</strong> → grant permissions → copy the Web app URL</li>
+                    <li>Paste here → click <strong>💾 Save Settings</strong></li>
                 </ol>
                 <div class="callout" style="margin-top:10px;">
-                    ⚠️ <strong>After any future script change:</strong> Deploy → Manage deployments → ✏️ Edit → select <em>New version</em> → Deploy. Skipping this means the old code keeps running.
+                    ⚠️ After any script change: Deploy → Manage deployments → Edit → <em>New version</em> → Deploy.
                 </div>
             </div>
         </div>
@@ -317,209 +274,142 @@ pre {
                 📷 Where is the Photo Index Sheet (Sheet1)? <span>▼</span>
             </button>
             <div class="acc-body">
-                <p>Sheet1 is in the <strong>Metabase_Foto</strong> Google Drive folder. It maps each student's email to their photo file on Drive.</p>
-                <table class="htbl" style="margin-top:8px;">
-                    <tr><td>Col A</td><td>Student name — ignored by the script</td></tr>
-                    <tr><td>Col B</td><td>School email — e.g. <code>antony.aghilesh@student.swissedcol.ch</code></td></tr>
-                    <tr><td>Col C</td><td>Google Drive photo URL — thumbnail format is fine: <code>https://drive.google.com/thumbnail?id=…&sz=w200</code></td></tr>
+                <p>Sheet1 is in the <strong>Metabase_Foto</strong> Google Drive folder. It maps each student's email to their photo file.</p>
+                <table class="htbl">
+                    <tr><td>Col A</td><td>Student name — ignored</td></tr>
+                    <tr><td>Col B</td><td>School email e.g. <code>antony.aghilesh@student.swissedcol.ch</code></td></tr>
+                    <tr><td>Col C</td><td>Google Drive photo URL — thumbnail format fine: <code>https://drive.google.com/thumbnail?id=…&sz=w200</code></td></tr>
                 </table>
-                <p style="margin-top:8px;">The Sheet1 spreadsheet must be accessible by the same Google account that runs the Apps Script. Open it → Share → add the Apps Script owner as Viewer if needed.</p>
             </div>
         </div>
 
         <div class="acc">
             <button class="acc-btn" onclick="toggleAcc(this)">
-                ❌ Settings not saving / forgotten after refresh <span>▼</span>
+                ❌ Settings forgotten / not saving <span>▼</span>
             </button>
             <div class="acc-body">
-                <ul style="padding-left:18px;">
-                    <li>You <strong>must click 💾 Save Settings</strong> — just typing in the fields is not enough</li>
-                    <li>Settings are stored in your browser's <em>localStorage</em> and survive page refreshes and tab closes on the same device and browser</li>
-                    <li>They are <strong>not</strong> saved in private/incognito windows — use a regular browser window</li>
-                    <li>If you clear browser data (cookies/cache), you will need to re-enter both URLs</li>
-                    <li>If the ⚠ badge still shows after clicking Save, check that both fields are filled in</li>
+                <ul>
+                    <li>Click <strong>💾 Save Settings</strong> — just typing is not enough</li>
+                    <li>Settings persist in browser localStorage on the same device/browser</li>
+                    <li>Private/incognito windows don't persist — use a regular window</li>
+                    <li>Clearing browser data removes saved settings</li>
                 </ul>
             </div>
         </div>
+    </div>
+</div>
 
-    </div><!-- /settings-body -->
-</div><!-- /settings-panel -->
-
-
-<!-- ═══════════════════ STEP 1 ════════════════════════════════════════════ -->
+<!-- ═══════════════ STEP 1 ═══════════════════════════════════════════════ -->
 <div class="step active" id="step1">
     <div class="step-hdr">
         <div class="step-num"><span class="num">1</span></div>
         <div><span class="step-title">Load Class List</span> <span class="step-sub">(Sheet2)</span></div>
     </div>
-
     <p style="font-size:13px;color:#555;margin-bottom:10px;">
-        Paste the URL of your master student list(LMS Import 20__). Columns are found automatically by header name —
-        no need to worry about column positions.<br>
+        Paste the master student list URL. Columns are found by header name automatically.<br>
         <strong>Required headers:</strong> <code>Class</code> · <code>First Name Last Name</code> · <code>School Email</code> · <code>Birthday</code>
     </p>
-
     <div class="input-row">
         <input type="url" id="inSheet2"
                placeholder="https://docs.google.com/spreadsheets/d/…"
                onkeydown="if(event.key==='Enter') loadClasses()" />
         <button class="btn btn-blue" id="btnLoad" onclick="loadClasses()">Load Classes →</button>
     </div>
-
-    <div class="status-bar hidden" id="st1"></div>
+    <div class="sbar" id="st1"></div>
 
     <div class="acc" style="margin-top:14px;">
         <button class="acc-btn" onclick="toggleAcc(this)">
-            ❓ "Load Classes" button not working — what to check <span>▼</span>
+            ❓ Troubleshooting — "Load Classes" not working <span>▼</span>
         </button>
         <div class="acc-body">
             <table class="htbl">
-                <tr>
-                    <td>Button does nothing</td>
-                    <td>The Apps Script URL must be saved first. Open <strong>⚙️ Settings</strong> at the top, paste the Web App URL, and click <strong>💾 Save Settings</strong>. The tool cannot contact Google without it.</td>
-                </tr>
-                <tr>
-                    <td>❌ Network / fetch error</td>
-                    <td>The Apps Script must be deployed as a Web App with <em>Who has access: Anyone</em>. Go to Apps Script → <strong>Deploy → Manage deployments → Edit → New version → Deploy</strong>. Also make sure you are using the latest <code>StudentIDCards.gs</code> file (v5, which uses <code>doGet</code> instead of <code>doPost</code>).</td>
-                </tr>
-                <tr>
-                    <td>❌ "Cannot open Sheet2"</td>
-                    <td>The Google account running the Apps Script must have access to Sheet2. Open Sheet2 → Share → add the Apps Script owner's email as Viewer.</td>
-                </tr>
-                <tr>
-                    <td>❌ "Class column not found"</td>
-                    <td>Row 1 of Sheet2 must have header cells. The header <code>Class</code> must exist (case-insensitive). Check for extra spaces or typos in the header row.</td>
-                </tr>
-                <tr>
-                    <td>⚠️ 0 students found</td>
-                    <td>Rows with no <code>@</code> in the email column are skipped. Check that the <code>School Email</code> column is correctly labelled and populated.</td>
-                </tr>
-                <tr>
-                    <td>❌ "Invalid URL"</td>
-                    <td>Copy the full URL from your browser address bar while Sheet2 is open. It must start with <code>https://docs.google.com/spreadsheets/d/</code>.</td>
-                </tr>
+                <tr><td>Button does nothing</td><td>The Apps Script URL must be saved first. Open <strong>⚙️ Settings</strong>, paste the Web App URL, click <strong>💾 Save Settings</strong>.</td></tr>
+                <tr><td>❌ Network / fetch error</td><td>Apps Script must be deployed as Web App with <em>Who has access: Anyone</em>. Use the latest <code>StudentIDCards.gs</code> (v6, uses <code>doGet</code>). Re-deploy as a new version after any script change.</td></tr>
+                <tr><td>❌ "Cannot open Sheet2"</td><td>The Apps Script owner must have access to Sheet2. Open Sheet2 → Share → add the owner as Viewer.</td></tr>
+                <tr><td>❌ "Class column not found"</td><td>Row 1 of Sheet2 must have a header cell containing exactly <code>Class</code> (case-insensitive).</td></tr>
+                <tr><td>⚠️ 0 students / very few rows</td><td>Only rows whose <code>Class</code> column matches the strict <code>YY-TX-Class-*</code> format are counted. All other rows (row numbers, status notes, etc.) are automatically ignored.</td></tr>
             </table>
         </div>
     </div>
 
     <div class="acc">
         <button class="acc-btn" onclick="toggleAcc(this)">
-            📋 Required Sheet2 structure and column details <span>▼</span>
+            📋 Required Sheet2 structure <span>▼</span>
         </button>
         <div class="acc-body">
-            <p style="margin-bottom:8px;">Sheet2 needs a <strong>header row (row 1)</strong>. Any extra columns are ignored. The four columns below are required:</p>
             <table class="htbl">
-                <tr>
-                    <td><code>Class</code></td>
-                    <td>Full class name — e.g. <code>26-T1-Class-BBA</code> or <code>25-T4-Class-MBA</code>. The prefix before "Class-" is used to group students and assign validity periods.</td>
-                </tr>
-                <tr>
-                    <td><code>First Name Last Name</code></td>
-                    <td>Combined name in one column. Nicknames in dashes are stripped automatically:<br>
-                        <code>-Ann- Thi Dung Phung</code> → <code>Thi Dung Phung</code><br>
-                        <code>Phan -Annabelle- Thi Bich Ngan</code> → <code>Phan Thi Bich Ngan</code><br>
-                        <code>- Phuong Anh Pham</code> → <code>Phuong Anh Pham</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td><code>School Email</code></td>
-                    <td>Unique student identifier used to match with the Photo Index. Must contain <code>@</code>.</td>
-                </tr>
-                <tr>
-                    <td><code>Birthday</code></td>
-                    <td>Any date format is accepted: <code>10/08/2006</code>, <code>10.08.2006</code>, <code>2006-08-10</code>. Output is always <code>DD/MM/YYYY</code>.</td>
-                </tr>
+                <tr><td><code>Class</code></td><td>Must match strict format <code>YY-TX-Class-Level</code> — e.g. <code>26-T1-Class-BBA</code>, <code>25-T4-Class-MBA</code>. Rows that don't match (row numbers, status notes, etc.) are silently skipped.</td></tr>
+                <tr><td><code>First Name Last Name</code></td><td>Combined name. Nickname patterns removed: <code>-Ann- Thi Dung Phung</code> → <code>Thi Dung Phung</code></td></tr>
+                <tr><td><code>School Email</code></td><td>Unique identifier. Must contain <code>@</code>.</td></tr>
+                <tr><td><code>Birthday</code></td><td>Any date format accepted. Output always <code>DD/MM/YYYY</code>.</td></tr>
             </table>
         </div>
     </div>
-</div><!-- /step1 -->
+</div>
 
-
-<!-- ═══════════════════ STEP 2 ════════════════════════════════════════════ -->
+<!-- ═══════════════ STEP 2 ═══════════════════════════════════════════════ -->
 <div class="step locked" id="step2">
     <div class="step-hdr">
         <div class="step-num"><span class="num">2</span></div>
         <div><span class="step-title">Set Validity Periods</span></div>
     </div>
-
-    <!-- Locked placeholder — shown until step 1 succeeds -->
-    <div id="step2locked" class="locked-msg">
-        🔒 Complete Step 1 first — classes will appear here automatically
-    </div>
-
-    <!-- Actual content — hidden until step 1 succeeds -->
+    <div id="step2locked" class="locked-msg">🔒 Complete Step 1 first</div>
     <div id="step2content" style="display:none;">
         <p style="font-size:13px;color:#555;margin-bottom:10px;">
-            Students are grouped by class prefix. Set the validity period for each group in
-            <code>MM/YYYY-MM/YYYY</code> format. Leave blank to <strong>skip</strong> that group (those students won't appear in the output).
+            Only valid class groups (<code>YY-TX-Class-*</code>) are shown below — all other Sheet2 rows are ignored automatically.
+            Set a validity period for each group in <code>MM/YYYY-MM/YYYY</code> format. Leave blank to skip that group.
         </p>
-
         <table class="vtable">
             <thead><tr>
-                <th>Class Prefix</th>
-                <th>Students</th>
-                <th>Validity Period</th>
-                <th></th>
+                <th>Class Prefix</th><th>Students</th><th>Validity Period</th><th></th>
             </tr></thead>
             <tbody id="classBody"></tbody>
         </table>
-
-        <div class="status-bar hidden" id="st2"></div>
+        <div class="sbar" id="st2"></div>
         <div class="chips" id="classChips"></div>
 
         <div class="acc" style="margin-top:12px;">
             <button class="acc-btn" onclick="toggleAcc(this)">
-                ❓ What are validity periods? How are they formatted? <span>▼</span>
+                ❓ Validity period format and defaults <span>▼</span>
             </button>
             <div class="acc-body">
-                <p>The validity period appears on the ID card to show when it is valid. It is based on the student's intake term:</p>
+                <p>The validity period appears on the ID card. It is based on the student's intake term:</p>
                 <table class="htbl" style="margin:8px 0;">
-                    <tr><td><code>25-T3-Class-…</code></td><td>Intake July 2025 → validity <code>07/2025-06/2026</code></td></tr>
-                    <tr><td><code>25-T4-Class-…</code></td><td>Intake October 2025 → validity <code>10/2025-09/2026</code></td></tr>
-                    <tr><td><code>26-T1-Class-…</code></td><td>Intake January 2026 → validity <code>01/2026-12/2026</code></td></tr>
-                    <tr><td><code>26-T2-Class-…</code></td><td>Intake April 2026 → validity <code>04/2026-03/2027</code></td></tr>
+                    <tr><td><code>25-T3-Class-…</code></td><td><code>07/2025-06/2026</code></td></tr>
+                    <tr><td><code>25-T4-Class-…</code></td><td><code>10/2025-09/2026</code></td></tr>
+                    <tr><td><code>26-T1-Class-…</code></td><td><code>01/2026-12/2026</code></td></tr>
+                    <tr><td><code>26-T2-Class-…</code></td><td><code>04/2026-03/2027</code></td></tr>
                 </table>
-                <p>Values are pre-filled automatically. You can edit any field — format must be <code>MM/YYYY-MM/YYYY</code>.</p>
-                <p style="margin-top:6px;">To add a new term permanently for future use, edit the <code>DEFAULT_VALIDITY</code> object at the top of the <code>&lt;script&gt;</code> in <code>index.html</code>.</p>
+                <p>Values are pre-filled automatically. To add new terms permanently, edit <code>DEFAULT_VALIDITY</code> in <code>index.html</code>.</p>
             </div>
         </div>
     </div>
-</div><!-- /step2 -->
+</div>
 
-
-<!-- ═══════════════════ STEP 3 ════════════════════════════════════════════ -->
+<!-- ═══════════════ STEP 3 ═══════════════════════════════════════════════ -->
 <div class="step locked" id="step3">
     <div class="step-hdr">
         <div class="step-num"><span class="num">3</span></div>
         <div><span class="step-title">Generate &amp; Download</span></div>
     </div>
-
-    <!-- Locked placeholder -->
-    <div id="step3locked" class="locked-msg">
-        🔒 Complete Steps 1 &amp; 2 first
-    </div>
-
-    <!-- Actual content -->
+    <div id="step3locked" class="locked-msg">🔒 Complete Steps 1 &amp; 2 first</div>
     <div id="step3content" style="display:none;">
         <p style="font-size:13px;color:#555;margin-bottom:6px;">
-            The Apps Script will: <strong>(1)</strong> match each student's email to their photo in Sheet1,
-            <strong>(2)</strong> copy &amp; rename all photos to a new Drive folder,
-            <strong>(3)</strong> write the formatted student list sheet with clickable relative photo links.
+            The Apps Script will copy &amp; rename all photos, create the student list, and organise everything
+            into a new folder in your Google Drive:
+            <strong>My Drive → Metabase_Foto → IDMakerTool → ID_Files_[date]</strong>
         </p>
         <p style="font-size:13px;color:#c5221f;margin-bottom:16px;">
-            ⏱ Takes <strong>1–3 minutes</strong> for ~90 students. <strong>Do not close this tab</strong> while it runs.
+            ⏱ Takes <strong>1–3 minutes</strong> for ~90 students. Do not close this tab.
         </p>
-
-        <div style="text-align:center; margin-bottom:14px;">
+        <div style="text-align:center;margin-bottom:14px;">
             <button class="btn btn-green btn-lg" id="btnGen" onclick="generate()">⚡ Generate Now</button>
         </div>
-
-        <div id="progWrap" style="display:none;" class="prog-wrap">
+        <div id="progWrap" style="display:none;">
             <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
-            <div class="prog-label" id="progLabel">Starting…</div>
+            <div class="prog-lbl" id="progLbl">Starting…</div>
         </div>
-
-        <div class="status-bar hidden" id="st3"></div>
+        <div class="sbar" id="st3"></div>
         <div id="result"></div>
 
         <div class="acc" style="margin-top:16px;">
@@ -528,134 +418,69 @@ pre {
             </button>
             <div class="acc-body">
                 <table class="htbl">
-                    <tr>
-                        <td>❌ "Failed to fetch" / network error</td>
-                        <td>The Apps Script is not responding to GET requests. Ensure you have the latest <code>StudentIDCards.gs</code> (uses <code>doGet</code>) and have <strong>re-deployed as a New version</strong>. The previous version used <code>doPost</code> which is blocked by browsers when called from GitHub Pages.</td>
-                    </tr>
-                    <tr>
-                        <td>❌ "0 students matched"</td>
-                        <td>No class prefixes in Sheet2 match entries in the validity table. Check Step 2 — at least one row must have a filled validity period.</td>
-                    </tr>
-                    <tr>
-                        <td>⚠️ Many "photo not in index"</td>
-                        <td>Those students are in Sheet2 but not in Sheet1. Open Sheet1 and add a row for each missing student: Col B = email, Col C = Drive photo thumbnail URL. Then re-run — already-copied photos are skipped.</td>
-                    </tr>
-                    <tr>
-                        <td>❌ "Cannot access file"</td>
-                        <td>A photo Drive file is not shared with the Apps Script owner. The owner needs at least Viewer access to the file or its parent folder.</td>
-                    </tr>
-                    <tr>
-                        <td>⏱ Times out at ~6 min</td>
-                        <td>Google Apps Script has a 6-minute execution limit. For 100+ students, blank half the validity periods (those students are skipped), run, then restore and run again. Already-copied photos are never re-downloaded so there is no duplication.</td>
-                    </tr>
-                    <tr>
-                        <td>⚠️ 0 photos copied</td>
-                        <td>Check that the Photo Index URL in Settings points to Sheet1 (not Sheet2) and that Col C contains Google Drive URLs (must include <code>drive.google.com</code>).</td>
-                    </tr>
+                    <tr><td>❌ "Failed to fetch"</td><td>Not responding to GET requests. Re-deploy the Apps Script as a <strong>New version</strong> using the latest <code>StudentIDCards.gs</code> (v6 with <code>doGet</code>).</td></tr>
+                    <tr><td>❌ "0 students matched"</td><td>No class prefixes in Step 2 have a validity period set. Fill in at least one row.</td></tr>
+                    <tr><td>⚠️ Many missing photos</td><td>Those students are in Sheet2 but not Sheet1. Add their email + Drive photo URL to Sheet1 then re-run.</td></tr>
+                    <tr><td>❌ "Cannot access file"</td><td>Photo Drive file not shared with Apps Script owner. Owner needs Viewer access to the file or its folder.</td></tr>
+                    <tr><td>⏱ Times out (~6 min)</td><td>Blank half the validity periods to skip half the students, run, then restore and run again. Already-copied photos are skipped.</td></tr>
                 </table>
             </div>
         </div>
 
         <div class="acc">
             <button class="acc-btn" onclick="toggleAcc(this)">
-                📥 How to download and assemble the final package <span>▼</span>
+                ℹ️ How the whole system works <span>▼</span>
             </button>
             <div class="acc-body">
-                <p style="margin-bottom:10px;">After a successful run, two green/blue buttons appear. Here is what to do:</p>
-                <ol style="padding-left:18px; line-height:2.1;">
-                    <li>Click <strong>Open Student List</strong> → in Google Sheets: <strong>File → Download → Microsoft Excel (.xlsx)</strong> → save to a local folder (e.g. <code>StudentIDCards/</code>)</li>
-                    <li>Click <strong>Open Photos Folder</strong> → in Google Drive: right-click the folder → <strong>Download</strong> → Google creates a ZIP → save and unzip it</li>
-                    <li><strong>Rename</strong> the unzipped folder to exactly <code>Photos</code> (capital P — Google adds a timestamp to the name)</li>
-                    <li>Move the <code>Photos</code> folder into <code>StudentIDCards/</code> so it sits <strong>next to</strong> the <code>.xlsx</code> file</li>
-                    <li>Open the Excel → click any cell in the <strong>Link_to_Cropped_Photo</strong> column → the photo opens locally 🎉</li>
-                    <li>Optional: ZIP the entire <code>StudentIDCards/</code> folder to share — links work on any machine</li>
+                <p>When you click Generate, the Apps Script:</p>
+                <ol>
+                    <li>Reads Sheet1 → builds email-to-photo lookup</li>
+                    <li>Reads Sheet2 → filters to valid class rows with a validity period</li>
+                    <li>Cleans names, formats birthdays as <code>DD/MM/YYYY</code></li>
+                    <li>Creates <strong>My Drive → Metabase_Foto → IDMakerTool → ID_Files_[datetime]</strong></li>
+                    <li>Inside: creates a <code>Photos/</code> subfolder → copies and renames each photo to <code>email.jpg</code></li>
+                    <li>Inside: creates a new <code>ID_Cards_Output</code> Google Sheet with 6 columns</li>
+                    <li>Photo column uses <code>=HYPERLINK("Photos/email.jpg", …)</code> — a relative path that works offline</li>
                 </ol>
-                <pre>StudentIDCards/
-  ├── StudentIDCards.xlsx
-  └── Photos/                  ← must be named exactly "Photos"
-        ├── antony.aghilesh@student.swissedcol.ch.jpg
-        ├── sahil.koshiya@student.swissedcol.ch.jpg
-        └── …</pre>
-                <div class="callout" style="margin-top:8px;">
-                    ⚠️ The folder <strong>must</strong> be named <code>Photos</code> with a capital P. Google Drive downloads folders with a timestamp in the name (e.g. <code>Photos_20260220_1430</code>) — rename it before opening the Excel file or the links will not resolve.
-                </div>
+                <p style="margin-top:8px;"><strong>Name cleaning:</strong></p>
+                <table class="htbl">
+                    <tr><td><code>-Ann- Thi Dung Phung</code></td><td>→ <code>Thi Dung Phung</code></td></tr>
+                    <tr><td><code>Phan -Annabelle- Thi Bich Ngan</code></td><td>→ <code>Phan Thi Bich Ngan</code></td></tr>
+                    <tr><td><code>- Phuong Anh Pham</code></td><td>→ <code>Phuong Anh Pham</code></td></tr>
+                </table>
             </div>
         </div>
-
-        <div class="acc">
-            <button class="acc-btn" onclick="toggleAcc(this)">
-                🔄 Re-running to fix missing photos <span>▼</span>
-            </button>
-            <div class="acc-body">
-                <ul style="padding-left:18px;">
-                    <li>Add the missing student rows to Sheet1 (Col B = email, Col C = Drive photo thumbnail URL)</li>
-                    <li>Click <strong>Generate Now</strong> again — the script checks the new <code>Photos_…</code> folder and skips files already copied</li>
-                    <li>A new <code>Photos_…</code> folder is created each run — download from the latest one</li>
-                    <li>The <code>ID_Cards_Output</code> sheet is fully replaced each run with the complete updated list</li>
-                    <li>There is no need to change anything in Steps 1 or 2 for a re-run</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div><!-- /step3 -->
-
-
-<!-- ═══════════════════ HOW IT WORKS ══════════════════════════════════════ -->
-<div class="acc" style="margin-bottom:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.07); overflow:hidden;">
-    <button class="acc-btn" onclick="toggleAcc(this)" style="font-size:14px; padding:14px 18px;">
-        ℹ️ How the whole system works — full overview <span>▼</span>
-    </button>
-    <div class="acc-body" style="background:white;">
-        <p style="margin-bottom:10px;"><strong>Three components work together:</strong></p>
-        <table class="htbl" style="margin-bottom:14px;">
-            <tr>
-                <td>📋 Sheet1<br><small style="font-weight:400;">(Photo Index)</small></td>
-                <td>Maps each student email to their Google Drive photo. Maintained by admin in the Metabase_Foto folder. The script reads Col B (email) and Col C (Drive thumbnail URL) to locate and copy each photo.</td>
-            </tr>
-            <tr>
-                <td>📊 Sheet2<br><small style="font-weight:400;">(Class List)</small></td>
-                <td>Master student list — one row per student with Class, Name, Email, Birthday. Only students in Sheet2 appear in the output. The class name determines the validity period.</td>
-            </tr>
-            <tr>
-                <td>⚙️ Apps Script<br><small style="font-weight:400;">(Backend)</small></td>
-                <td>Runs on Google's servers. Reads both sheets, copies and renames photos, writes the formatted output sheet with relative hyperlinks. No local installation required.</td>
-            </tr>
-        </table>
-
-        <p style="margin-bottom:8px;"><strong>What happens when you click Generate:</strong></p>
-        <ol style="padding-left:18px; line-height:2.1; margin-bottom:14px;">
-            <li>Reads all rows from Sheet1 → builds lookup: <em>email → Drive file ID</em> (extracted from the thumbnail URL)</li>
-            <li>Reads all rows from Sheet2 → filters to students whose class prefix matches a validity period</li>
-            <li>For each student: removes nickname patterns from the name, formats birthday as <code>DD/MM/YYYY</code></li>
-            <li>Looks up the student's email in the Sheet1 index → opens the Drive photo file → makes a copy named <code>email.jpg</code> → saves to a new <code>Photos_…</code> Drive folder</li>
-            <li>Writes the <code>ID_Cards_Output</code> sheet with 6 columns: Studies at | Name | School Email | Born | Validity | Link_to_Cropped_Photo</li>
-            <li>The photo column uses <code>=HYPERLINK("Photos/email.jpg","email.jpg")</code> — a relative path that works when the Photos folder is placed next to the Excel file</li>
-        </ol>
-
-        <p style="margin-bottom:6px;"><strong>Name cleaning examples:</strong></p>
-        <table class="htbl">
-            <tr><td><code>-Ann- Thi Dung Phung</code></td><td>→ <code>Thi Dung Phung</code></td></tr>
-            <tr><td><code>Phan -Annabelle- Thi Bich Ngan</code></td><td>→ <code>Phan Thi Bich Ngan</code></td></tr>
-            <tr><td><code>- Phuong Anh Pham</code></td><td>→ <code>Phuong Anh Pham</code></td></tr>
-        </table>
-
-        <p style="margin-top:12px; margin-bottom:6px;"><strong>Output sheet columns:</strong></p>
-        <table class="htbl">
-            <tr><td>Studies at</td><td>Always "Swiss Educational College"</td></tr>
-            <tr><td>Name</td><td>Cleaned full name</td></tr>
-            <tr><td>School Email</td><td>The student's email address</td></tr>
-            <tr><td>Born</td><td>Birthday in <code>DD/MM/YYYY</code> format</td></tr>
-            <tr><td>Validity</td><td>Card validity period in <code>MM/YYYY-MM/YYYY</code> format</td></tr>
-            <tr><td>Link_to_Cropped_Photo</td><td>Clickable relative link to the renamed photo — works offline once Photos folder is placed next to the Excel file</td></tr>
-        </table>
     </div>
 </div>
 
-<div class="footer">Swiss Educational College · Student ID Card Generator</div>
+<!-- ═══════════════ OVERVIEW ═════════════════════════════════════════════ -->
+<div class="acc" style="margin-bottom:20px; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+    <button class="acc-btn" onclick="toggleAcc(this)" style="font-size:14px;padding:14px 18px;">
+        ℹ️ Full system overview &amp; data requirements <span>▼</span>
+    </button>
+    <div class="acc-body" style="background:white;">
+        <p><strong>Three components:</strong></p>
+        <table class="htbl" style="margin-bottom:14px;">
+            <tr><td>📋 Sheet1 (Photo Index)</td><td>Maps email → Drive photo. Maintained in Metabase_Foto folder. Col B = email, Col C = thumbnail URL.</td></tr>
+            <tr><td>📊 Sheet2 (Class List)</td><td>Master list of students. One row per student. Only rows with valid <code>YY-TX-Class-*</code> class names are processed.</td></tr>
+            <tr><td>⚙️ Apps Script</td><td>Google-hosted backend. Reads both sheets, copies photos, writes output, creates organised Drive folder. No local installation needed.</td></tr>
+        </table>
+        <p><strong>Output folder structure (created automatically in Drive):</strong></p>
+        <pre>My Drive/
+  └── Metabase_Foto/
+        └── IDMakerTool/
+              └── ID_Files_20260224_1430/   ← new folder each run
+                    ├── ID_Cards_Output     ← Google Sheet → download as .xlsx
+                    └── Photos/             ← already correctly named
+                          ├── antony.aghilesh@student.swissedcol.ch.jpg
+                          └── …</pre>
+        <p style="margin-top:10px;"><strong>Valid class format:</strong> <code>YY-TX-Class-Level</code> — two digits, dash, T1–T4, dash, Class-, level name. Anything else (row numbers, status notes, internship dates) is silently ignored and never appears in Step 2.</p>
+    </div>
+</div>
 
-<!-- ═══════════════════ SCRIPT ════════════════════════════════════════════ -->
+<div class="footer">Swiss Educational College · Student ID Card Generator v6</div>
+
 <script>
-// Default validity per term prefix — edit here to add new intakes
 var DEFAULT_VALIDITY = {
     '25-T3-': '07/2025-06/2026',
     '25-T4-': '10/2025-09/2026',
@@ -668,77 +493,61 @@ var DEFAULT_VALIDITY = {
 var WEB_APP_URL = '';
 var SHEET1_URL  = '';
 
-// ── Page init ─────────────────────────────────────────────────────────────
+// Valid class prefix: exactly 2 digits, dash, T1-4, dash, Class-
+var VALID_CLASS_RE = /^\d{2}-T[1-4]-Class-/;
+
 window.onload = function() {
     WEB_APP_URL = localStorage.getItem('idcard_webapp') || '';
     SHEET1_URL  = localStorage.getItem('idcard_sheet1') || '';
-
     document.getElementById('inWebApp').value = WEB_APP_URL;
     document.getElementById('inSheet1').value = SHEET1_URL;
-
     if (WEB_APP_URL) document.getElementById('inWebApp').classList.add('set');
     if (SHEET1_URL)  document.getElementById('inSheet1').classList.add('set');
-
     updateBadge();
-
-    // Auto-open settings if not configured yet
-    if (!WEB_APP_URL || !SHEET1_URL) {
-        document.getElementById('settingsBody').classList.remove('hidden');
-        document.getElementById('sArrow').textContent = '▲';
-    } else {
-        document.getElementById('settingsBody').classList.add('hidden');
-        document.getElementById('sArrow').textContent = '▼';
-    }
+    if (!WEB_APP_URL || !SHEET1_URL) openSettings();
+    else closeSettings();
 };
 
 // ── Settings ──────────────────────────────────────────────────────────────
 function toggleSettings() {
-    var body  = document.getElementById('settingsBody');
-    var arrow = document.getElementById('sArrow');
-    if (body.classList.contains('hidden')) {
-        body.classList.remove('hidden');
-        arrow.textContent = '▲';
-    } else {
-        body.classList.add('hidden');
-        arrow.textContent = '▼';
-    }
+    var body = document.getElementById('settingsBody');
+    if (body.classList.contains('hidden')) openSettings(); else closeSettings();
 }
-
+function openSettings() {
+    document.getElementById('settingsBody').classList.remove('hidden');
+    document.getElementById('sArrow').textContent = '▲';
+}
+function closeSettings() {
+    document.getElementById('settingsBody').classList.add('hidden');
+    document.getElementById('sArrow').textContent = '▼';
+}
 function saveSettings() {
     WEB_APP_URL = document.getElementById('inWebApp').value.trim();
     SHEET1_URL  = document.getElementById('inSheet1').value.trim();
     localStorage.setItem('idcard_webapp', WEB_APP_URL);
     localStorage.setItem('idcard_sheet1', SHEET1_URL);
-
     document.getElementById('inWebApp').classList.toggle('set', !!WEB_APP_URL);
     document.getElementById('inSheet1').classList.toggle('set', !!SHEET1_URL);
     updateBadge();
-
     var ok = document.getElementById('savedOk');
     ok.style.display = 'inline';
     setTimeout(function(){ ok.style.display = 'none'; }, 2500);
 }
-
-function onSettingsChange() {
-    document.getElementById('savedOk').style.display = 'none';
-}
-
+function onSettingsChange() { document.getElementById('savedOk').style.display = 'none'; }
 function updateBadge() {
-    var done  = WEB_APP_URL && SHEET1_URL;
-    var badge = document.getElementById('sBadge');
-    var panel = document.getElementById('settingsPanel');
-    badge.textContent = done ? '✓ Configured' : '⚠ Setup required — click to open';
-    badge.className   = 's-badge ' + (done ? 'good' : 'warn');
-    panel.className   = 'settings-panel' + (done ? ' ok' : '');
+    var done = WEB_APP_URL && SHEET1_URL;
+    var b = document.getElementById('sBadge');
+    b.textContent = done ? '✓ Configured' : '⚠ Setup required — click to open';
+    b.className   = 's-badge ' + (done ? 'good' : 'warn');
+    document.getElementById('settingsPanel').className = 'settings-panel' + (done ? ' ok' : '');
 }
 
 // ── Accordion ─────────────────────────────────────────────────────────────
 function toggleAcc(btn) {
     var body = btn.nextElementSibling;
     var open = body.classList.toggle('open');
-    // Flip the arrow (last child of btn)
-    var arrow = btn.querySelector('span:last-child');
-    if (arrow) arrow.textContent = open ? '▲' : '▼';
+    var arr  = btn.querySelector('span:last-child');
+    if (arr) arr.textContent = open ? '▲' : '▼';
 }
 
 // ── Step 1: Load classes ──────────────────────────────────────────────────
@@ -747,18 +556,14 @@ function loadClasses() {
     var wa = document.getElementById('inWebApp').value.trim() || WEB_APP_URL;
 
     if (!wa) {
-        showBar('st1', 'error',
-            '❌ Apps Script URL not saved. Open ⚙️ Settings at the top, paste your Web App URL, and click 💾 Save Settings.');
-        openSettings();
-        return;
+        showBar('st1', 'error', '❌ Apps Script URL not saved. Open ⚙️ Settings, paste the URL and click 💾 Save Settings.');
+        openSettings(); return;
     }
-    WEB_APP_URL = wa;  // use whatever is currently in the field even if not saved yet
+    WEB_APP_URL = wa;
 
-    if (!s2) {
-        showBar('st1', 'error', '❌ Please paste your Sheet2 URL in the field above.'); return;
-    }
+    if (!s2) { showBar('st1', 'error', '❌ Please paste your Sheet2 URL.'); return; }
     if (s2.indexOf('docs.google.com/spreadsheets') === -1) {
-        showBar('st1', 'error', '❌ That doesn\'t look like a Google Sheets URL. Copy it directly from your browser address bar while Sheet2 is open.'); return;
+        showBar('st1', 'error', '❌ That doesn\'t look like a Google Sheets URL.'); return;
     }
 
     showBar('st1', 'info', '⏳ Connecting to Apps Script and reading Sheet2…');
@@ -766,36 +571,30 @@ function loadClasses() {
 
     callScript({ action: 'loadClasses', sheet2Url: s2 })
         .then(function(data) {
-            if (!data.success) throw new Error(data.error || 'Unknown error returned by Apps Script');
+            if (!data.success) throw new Error(data.error || 'Unknown error');
+            if (data.classes.length === 0) throw new Error('No valid class groups found. Check that Sheet2 has rows with Class column in YY-TX-Class-Level format.');
             buildClassTable(data.classes, data.totalStudents);
-            showBar('st1', 'success',
-                '✅ Found ' + data.totalStudents + ' students across ' + data.classes.length + ' class group(s). Review validity periods in Step 2 then generate.');
-            setStepDone('step1');
-            unlockStep('step2');
-            unlockStep('step3');
+            showBar('st1', 'success', '✅ Found ' + data.totalStudents + ' students in ' + data.classes.length + ' class group(s).');
+            setDone('step1');
+            unlock('step2');
+            unlock('step3');
             document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
         })
         .catch(function(e) {
-            showBar('st1', 'error', '❌ ' + e.message + ' — expand the troubleshooting section above for help.');
+            showBar('st1', 'error', '❌ ' + e.message + ' — see troubleshooting above.');
             document.getElementById('step1').className = 'step errored';
         })
-        .finally(function() {
-            document.getElementById('btnLoad').disabled = false;
-        });
+        .finally(function() { document.getElementById('btnLoad').disabled = false; });
 }
 
-function unlockStep(id) {
-    var step = document.getElementById(id);
-    step.className = 'step active';
-    var locked  = document.getElementById(id + 'locked');
-    var content = document.getElementById(id + 'content');
-    if (locked)  locked.style.display  = 'none';
-    if (content) content.style.display = 'block';
+function unlock(id) {
+    document.getElementById(id).className = 'step active';
+    var l = document.getElementById(id + 'locked');
+    var c = document.getElementById(id + 'content');
+    if (l) l.style.display = 'none';
+    if (c) c.style.display = 'block';
 }
-
-function setStepDone(id) {
-    document.getElementById(id).className = 'step done';
-}
+function setDone(id) { document.getElementById(id).className = 'step done'; }
 
 function buildClassTable(classes, total) {
     var tbody = document.getElementById('classBody');
@@ -805,30 +604,23 @@ function buildClassTable(classes, total) {
     classes.forEach(function(c) {
         var def = guessValidity(c.prefix);
         if (def) inc += c.count; else skip += c.count;
-        var safeId = 'v_' + c.prefix.replace(/[^a-z0-9]/gi, '_');
-        var tr = document.createElement('tr');
+        var sid = 'v_' + c.prefix.replace(/[^a-z0-9]/gi, '_');
+        var tr  = document.createElement('tr');
         tr.innerHTML =
             '<td><span class="cbadge">' + esc(c.prefix) + '</span></td>' +
             '<td style="color:#666;">' + c.count + '</td>' +
             '<td>' +
-                '<input class="val-inp ' + (def ? 'ok' : 'skip') + '"' +
-                ' id="' + safeId + '"' +
-                ' data-prefix="' + esc(c.prefix) + '"' +
-                ' value="' + esc(def) + '"' +
-                ' placeholder="MM/YYYY-MM/YYYY"' +
-                ' oninput="onValChange(this)">' +
-                (def ? '' : ' <span style="font-size:11px;color:#ea4335;margin-left:6px;">will be skipped</span>') +
+                '<input class="val-inp ' + (def ? 'ok' : 'skip') + '" id="' + sid + '"' +
+                ' data-prefix="' + esc(c.prefix) + '" value="' + esc(def) + '"' +
+                ' placeholder="MM/YYYY-MM/YYYY" oninput="onValChange(this)">' +
+                (!def ? ' <span style="font-size:11px;color:#ea4335;margin-left:5px;">will be skipped</span>' : '') +
             '</td>' +
             '<td style="font-size:18px;">' + (def ? '✅' : '⚠️') + '</td>';
         tbody.appendChild(tr);
     });
 
-    // Summary bar
-    if (skip > 0) {
-        showBar('st2', 'warning', '⚠️ ' + skip + ' student(s) in unrecognised groups — add a validity period to include them, or leave blank to skip.');
-    } else {
-        showBar('st2', 'success', '✅ All ' + total + ' students have a validity period assigned.');
-    }
+    if (skip > 0) showBar('st2', 'warning', '⚠️ ' + skip + ' student(s) in unrecognised prefixes — add a validity period to include them.');
+    else          showBar('st2', 'success',  '✅ All ' + total + ' students have a validity period.');
 
     document.getElementById('classChips').innerHTML =
         '<div class="chip">👥 ' + total + ' total</div>' +
@@ -838,18 +630,16 @@ function buildClassTable(classes, total) {
 
 function onValChange(inp) {
     var v = inp.value.trim();
-    inp.classList.toggle('ok',   !!v);
-    inp.classList.toggle('skip', !v);
+    inp.classList.toggle('ok', !!v); inp.classList.toggle('skip', !v);
     var icon = inp.closest('tr').cells[3];
     if (icon) icon.textContent = v ? '✅' : '⚠️';
 }
 
 function guessValidity(prefix) {
+    // Only attempt match if prefix itself passes the strict format
+    if (!VALID_CLASS_RE.test(prefix)) return '';
     for (var k in DEFAULT_VALIDITY) {
-        if (DEFAULT_VALIDITY.hasOwnProperty(k)) {
-            if (prefix.indexOf(k) === 0 || prefix.substring(0, 7) === k.substring(0, 7))
-                return DEFAULT_VALIDITY[k];
-        }
+        if (DEFAULT_VALIDITY.hasOwnProperty(k) && prefix.indexOf(k) === 0) return DEFAULT_VALIDITY[k];
     }
     return '';
 }
@@ -860,57 +650,55 @@ function generate() {
     var s2 = document.getElementById('inSheet2').value.trim();
 
     if (!WEB_APP_URL) { showBar('st3','error','❌ Apps Script URL not set — open ⚙️ Settings.'); openSettings(); return; }
-    if (!s1)          { showBar('st3','error','❌ Photo Index URL (Sheet1) not set — open ⚙️ Settings.'); openSettings(); return; }
-    if (!s2)          { showBar('st3','error','❌ Sheet2 URL missing — complete Step 1 first.'); return; }
+    if (!s1)          { showBar('st3','error','❌ Photo Index URL not set — open ⚙️ Settings.'); openSettings(); return; }
+    if (!s2)          { showBar('st3','error','❌ Sheet2 URL missing — complete Step 1.'); return; }
 
     var validityMap = {};
     var inputs = document.querySelectorAll('.val-inp');
     for (var i = 0; i < inputs.length; i++) {
-        var p = inputs[i].getAttribute('data-prefix');
-        var v = inputs[i].value.trim();
+        var p = inputs[i].getAttribute('data-prefix'), v = inputs[i].value.trim();
         if (p && v) validityMap[p] = v;
     }
     if (!Object.keys(validityMap).length) {
-        showBar('st3','error','❌ No validity periods configured — fill in at least one row in Step 2.'); return;
+        showBar('st3','error','❌ No validity periods set — fill in at least one row in Step 2.'); return;
     }
 
     document.getElementById('btnGen').disabled = true;
     document.getElementById('result').innerHTML = '';
     document.getElementById('progWrap').style.display = 'block';
-    setProgress(8, 'Sending request to Apps Script…');
-    showBar('st3', 'info', '⏳ Processing — do not close this tab. This takes 1–3 minutes.');
+    setProgress(8, 'Sending request…');
+    showBar('st3', 'info', '⏳ Processing — do not close this tab. Takes 1–3 minutes.');
 
     callScript({ action: 'generate', sheet1Url: s1, sheet2Url: s2, validityMap: validityMap })
         .then(function(res) {
             setProgress(100, 'Complete!');
-            if (!res.success) throw new Error(res.error || 'Generation failed — check Apps Script execution log for details');
+            if (!res.success) throw new Error(res.error || 'Generation failed');
             showBar('st3', 'success',
-                '✅ ' + res.studentsCount + ' students processed — ' +
-                res.photoOk + ' photos copied, ' + (res.photoErrors ? res.photoErrors.length : 0) + ' missing.');
+                '✅ ' + res.studentsCount + ' students — ' + res.photoOk + ' photos copied, ' +
+                (res.photoErrors ? res.photoErrors.length : 0) + ' missing.');
             renderResult(res);
-            setStepDone('step3');
+            setDone('step3');
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         })
         .catch(function(e) {
             document.getElementById('progWrap').style.display = 'none';
             setProgress(0, '');
             showBar('st3', 'error', '❌ ' + e.message);
-            document.getElementById('step3').className = 'step errored';
+            document.getElementById('step3').classList.add('errored');
         })
-        .finally(function() {
-            document.getElementById('btnGen').disabled = false;
-        });
+        .finally(function() { document.getElementById('btnGen').disabled = false; });
 }
 
 function renderResult(res) {
-    var errs     = res.photoErrors || [];
-    var hasErrs  = errs.length > 0;
+    var errs    = res.photoErrors || [];
+    var hasErrs = errs.length > 0;
     var errBlock = hasErrs
         ? '<div class="err-log"><strong style="font-size:11px;">Missing photos (' + errs.length + ') — add to Sheet1 and re-run:</strong><br>' +
           errs.map(function(e){ return '<div>• ' + esc(e) + '</div>'; }).join('') + '</div>'
         : '';
 
     document.getElementById('result').innerHTML =
+        // Summary box
         '<div class="result-box ' + (hasErrs ? 'warn' : '') + '">' +
             '<h3>' + (hasErrs ? '⚠️ Done — some photos missing' : '✅ Generation Complete!') + '</h3>' +
             '<div class="result-stats">' +
@@ -918,72 +706,65 @@ function renderResult(res) {
                 '<div class="result-stat">📸 ' + res.photoOk + ' photos</div>' +
                 (hasErrs ? '<div class="result-stat">⚠️ ' + errs.length + ' missing</div>' : '') +
             '</div>' +
-            '<div class="result-btns">' +
-                '<a class="result-link green" href="' + esc(res.spreadsheetUrl) + '" target="_blank">📊 Open Student List</a>' +
-                '<a class="result-link blue"  href="' + esc(res.photoFolderUrl) + '" target="_blank">📁 Open Photos Folder</a>' +
-            '</div>' +
             errBlock +
         '</div>' +
-        '<div class="dl-card">' +
-            '<h4>📥 Download &amp; assemble</h4>' +
+
+        // Drive folder card
+        '<div class="folder-card">' +
+            '<h4>📁 Files organised in Google Drive</h4>' +
+            '<div class="folder-path">My Drive → Metabase_Foto → IDMakerTool → ' + esc(res.runFolderName) + '</div>' +
+            '<div class="folder-tree">' +
+                '📁 <a href="' + esc(res.runFolderUrl) + '" target="_blank"><strong>' + esc(res.runFolderName) + '</strong></a><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;📊 <a href="' + esc(res.spreadsheetUrl) + '" target="_blank">ID_Cards_Output</a>' +
+                '  <span style="color:#888;font-size:11px;font-family:sans-serif;">← open → File → Download → Excel (.xlsx)</span><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;📁 Photos/  ' +
+                '<span style="color:#888;font-size:11px;font-family:sans-serif;">← ' + res.photoOk + ' photos — already named correctly</span>' +
+            '</div>' +
+            '<h4 style="color:#333;font-size:14px;margin-bottom:10px;">📥 Download steps</h4>' +
             '<ol class="dl-list">' +
-                '<li><strong>Open Student List</strong> → File → Download → Microsoft Excel (.xlsx) → save to e.g. <code>StudentIDCards/</code></li>' +
-                '<li><strong>Open Photos Folder</strong> → right-click → Download → Google creates a ZIP → save and unzip</li>' +
-                '<li>Rename the unzipped folder to exactly <code>Photos</code> (Google adds a timestamp to the name)</li>' +
-                '<li>Place the <code>Photos</code> folder next to the <code>.xlsx</code> file in the same directory</li>' +
-                '<li>Open the Excel → click any cell in <strong>Link_to_Cropped_Photo</strong> → photo opens 🎉</li>' +
-                '<li>Optional: ZIP the entire folder to share — links work on any machine</li>' +
+                '<li>Click <strong><a href="' + esc(res.runFolderUrl) + '" target="_blank">Open Drive folder ↗</a></strong> to see both files in one place</li>' +
+                '<li>Open <strong>ID_Cards_Output</strong> sheet → <strong>File → Download → Microsoft Excel (.xlsx)</strong> → save to a local folder e.g. <code>StudentIDCards/</code></li>' +
+                '<li>Back in the Drive folder: right-click the <strong>Photos</strong> folder → <strong>Download</strong> → Google zips it → save and unzip → you get a folder called <code>Photos</code></li>' +
+                '<li>Place the <code>Photos</code> folder next to the <code>.xlsx</code> file (same directory)</li>' +
+                '<li>Open the Excel → click any cell in <strong>Link_to_Cropped_Photo</strong> → photo opens locally 🎉</li>' +
+                '<li>Optional: ZIP the whole folder to share — works on any machine</li>' +
             '</ol>' +
-            '<div class="callout" style="margin-top:6px;">⚠️ Rename the Photos folder to exactly <code>Photos</code> (capital P) before opening the Excel — otherwise the links will not resolve.</div>' +
+            '<div class="callout green" style="margin-top:6px;">✅ The <code>Photos</code> folder is <strong>already named correctly</strong> — no renaming needed this time.</div>' +
         '</div>';
 }
 
 // ── Network ───────────────────────────────────────────────────────────────
 function callScript(payload) {
     var base = WEB_APP_URL || document.getElementById('inWebApp').value.trim();
-    if (!base) return Promise.reject(new Error('Apps Script URL not configured — open ⚙️ Settings.'));
+    if (!base) return Promise.reject(new Error('Apps Script URL not set — open ⚙️ Settings.'));
 
     var url = base + '?payload=' + encodeURIComponent(JSON.stringify(payload));
-
     return fetch(url, { method: 'GET', redirect: 'follow' })
         .catch(function(err) {
-            throw new Error(
-                'Cannot reach the Apps Script. Likely causes: ' +
-                '(1) wrong URL in Settings, ' +
-                '(2) not deployed as Web App with "Who has access: Anyone", ' +
-                '(3) need to re-deploy after updating the script. ' +
-                'Network detail: ' + err.message
-            );
+            throw new Error('Cannot reach Apps Script. Check URL in Settings and that it is deployed as Web App with "Anyone" access. Detail: ' + err.message);
         })
-        .then(function(response) {
-            if (!response.ok) throw new Error('HTTP ' + response.status + ' from Apps Script — try re-deploying as a new version.');
-            return response.text();
+        .then(function(r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status + ' — re-deploy Apps Script as a new version.');
+            return r.text();
         })
         .then(function(text) {
             try { return JSON.parse(text); }
-            catch(e) { throw new Error('Apps Script returned unexpected content (not JSON). Re-deploy using the latest StudentIDCards.gs. Preview: ' + text.substring(0, 200)); }
+            catch(e) { throw new Error('Apps Script returned non-JSON. Re-deploy using latest StudentIDCards.gs. Preview: ' + text.substring(0, 200)); }
         });
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 function showBar(id, type, msg) {
     var el = document.getElementById(id);
-    el.className    = 'status-bar ' + type;
-    el.textContent  = msg;
+    el.className  = 'sbar show ' + type;
+    el.textContent = msg;
 }
-
-function setProgress(pct, label) {
-    document.getElementById('progFill').style.width  = pct + '%';
-    document.getElementById('progLabel').textContent = label;
+function setProgress(pct, lbl) {
+    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('progLbl').textContent  = lbl;
 }
-
-function openSettings() {
-    document.getElementById('settingsBody').classList.remove('hidden');
-    document.getElementById('sArrow').textContent = '▲';
-}
-
 function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
