@@ -336,7 +336,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 
     <div class="help">
         <strong>How to get the Apps Script URL:</strong> open any Google Sheet (IDMakerTool) &rarr; Extensions &rarr; Apps Script &rarr;
-         <code>StudentIDCards.gs</code> &rarr; Save &rarr; Deploy &rarr; New deployment &rarr; Web app &rarr;
+        paste <code>StudentIDCards.gs</code> &rarr; Save &rarr; Deploy &rarr; New deployment &rarr; Web app &rarr;
         Execute as: Me, Who has access: Anyone &rarr; Deploy &rarr; copy URL &rarr; paste above.<br><br>
         After any script change always re-deploy as a <strong>New version</strong> or the old code keeps running.<br><br>
         <strong>Settings work in incognito but not normal browser?</strong>
@@ -356,13 +356,13 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <div class="section active" id="step1">
     <div class="section-head">
         <span class="step-badge badge-blue">Step 1 of 3</span>
-        <h2>Load Student Data for Student ID</h2>
+        <h2>Load Student Data</h2>
         <span class="done-badge">✓ Done</span>
         <button class="help-btn" onclick="toggleHelp(this)" title="Show help">?</button>
     </div>
 
     <div class="action-box">
-        Paste your the URL of your student list (HEADERS must include |YY-TX-Class-Level|First Name|Last Name|School Email|Birthday|)and click <strong>Load Classes</strong>.
+        Paste your master class list URL and click <strong>Load Classes</strong>.
     </div>
 
     <div class="input-row">
@@ -391,7 +391,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <div class="section locked" id="step2">
     <div class="section-head">
         <span class="step-badge badge-gray" id="step2badge">Step 2 of 3</span>
-        <h2>Set Student ID Validity Periods</h2>
+        <h2>Set Validity Periods</h2>
         <span class="done-badge">✓ Done</span>
         <button class="help-btn" onclick="toggleHelp(this)" title="Show help">?</button>
     </div>
@@ -432,7 +432,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
 <div class="section locked" id="step3">
     <div class="section-head">
         <span class="step-badge badge-gray" id="step3badge">Step 3 of 3</span>
-        <h2>Generate Files for Student ID</h2>
+        <h2>Generate Files</h2>
         <span class="done-badge">✓ Done</span>
         <button class="help-btn" onclick="toggleHelp(this)" title="Show help">?</button>
     </div>
@@ -498,7 +498,7 @@ pre  { background: #f5f5f5; padding: 11px; border-radius: 6px; font-size: 12px; 
     </div>
 </div>
 
-<div class="footer">SEC &middot; Student ID Card Generator v6</div>
+<div class="footer">SEC &middot; Student ID Card Generator v6 &middot; <a href="https://sec-api.635300.xyz/admin/pictures" target="_blank" style="color:#4c7cff;text-decoration:none;">Sync Student Photos ↗</a></div>
 
 <script>
 var DEFAULT_VALIDITY = {
